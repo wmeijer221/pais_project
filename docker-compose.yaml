@@ -24,6 +24,9 @@ services:
     container_name: cam-external-client
     depends_on:
       - cam-workflow
+    environment:
+      - ENDPOINT=cam-workflow:8080
+      - TOPIC=topicName
 
 volumes:
   pgdata:
