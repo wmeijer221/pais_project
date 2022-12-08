@@ -24,8 +24,6 @@ services:
     container_name: camunda_external_client
     depends_on:
       - camunda_workflow
-    ports:
-      - "8393:8393"
 
 volumes:
   pgdata:
