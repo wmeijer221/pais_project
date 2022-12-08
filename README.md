@@ -4,5 +4,5 @@ Contains all code written as part of the course: Process Aware Information Syste
 
 ## Stack
 
-- Camunda 7.13
+- Camunda 7.18
 
