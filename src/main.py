@@ -48,7 +48,7 @@ def random_true():
     current_milli_time = int(round(time.time() * 1000))
     return current_milli_time % 2 == 0
 
-
 if __name__ == '__main__':
+    print("Starting external client.")
     ExternalTaskWorker(worker_id="1", config=default_config).subscribe(
         "topicName", handle_task)
