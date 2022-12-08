@@ -10,6 +10,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1vvvamz" sourceRef="Activity_0evyka8" targetRef="Event_0jivsg6" />
     <bpmn:serviceTask id="Activity_0evyka8" name="Test task" camunda:type="external" camunda:topic="topicName">
+      <bpmn:extensionElements />
       <bpmn:incoming>Flow_06ikhm0</bpmn:incoming>
       <bpmn:outgoing>Flow_1vvvamz</bpmn:outgoing>
     </bpmn:serviceTask>

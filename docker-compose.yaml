@@ -11,19 +11,19 @@ services:
     ports:
       - "5432:5432"
 
-  camunda_workflow:
+  cam-workflow:
     image: camunda/camunda-bpm-platform:7.18.0
-    container_name: camunda_workflow
+    container_name: cam-workflow
     depends_on:
       - postgres
     ports:
       - "8080:8080"
 
-  camunda_external_client:
+  cam-external-client:
     build: .
-    container_name: camunda_external_client
+    container_name: cam-external-client
     depends_on:
-      - camunda_workflow
+      - cam-workflow
 
 volumes:
   pgdata:
