@@ -1,0 +1,31 @@
+{
+  "components": [
+    {
+      "label": "Origin City Name",
+      "type": "textfield",
+      "id": "Field_0z971xp",
+      "key": "origin_city"
+    },
+    {
+      "label": "Destination City Name",
+      "type": "textfield",
+      "id": "Field_07ta3m4",
+      "key": "destination_city"
+    },
+    {
+      "label": "Departure Date",
+      "type": "textfield",
+      "id": "Field_11fr3qn",
+      "key": "departure_date"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1o8oafk",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.18.0",
+  "schemaVersion": 5
+}

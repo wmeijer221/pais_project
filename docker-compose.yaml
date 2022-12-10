@@ -26,7 +26,7 @@ services:
       - camunda-workflow
     environment:
       - ENDPOINT=camunda-workflow:8080
-      - TOPIC=topicName
+      - TOPIC=identifyCountries;navigateCountries
 
 volumes:
   pgdata:
