@@ -2,6 +2,7 @@
 Implements very simple external task handler.
 """
 
+import logging
 import os
 from concurrent.futures.thread import ThreadPoolExecutor
 
@@ -10,16 +11,17 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.client.engine_client import EngineClient
 
 
-from parallel_logger import log
-
 ENDPOINT_KEY = "ENDPOINT"
 TOPIC_KEY = "TOPIC"
 
+logging.root.setLevel(logging.CRITICAL)
+logger = logging.getLogger(__name__)
+
 
 def __handle_task(task: ExternalTask) -> TaskResult:
-    log("WIEHOO")
+    logger.critical("WIEHOO")
     vrs = task.get_variables()
-    log(vrs)
+    logger.critical(vrs)
     return task.complete()
 
 
@@ -33,13 +35,13 @@ def __create_workers():
     BASE_URL = f'http://{ENDPOINT}/engine-rest'
     topic_names = str(os.getenv(TOPIC_KEY)).strip().split(";")
 
-    log(f'{BASE_URL=}\n{topic_names=}')
+    logger.critical(f'{BASE_URL=}\n{topic_names=}')
 
-    client = EngineClient(BASE_URL)
+    EngineClient(BASE_URL)
     executor = ThreadPoolExecutor(max_workers=len(topic_names))
     for index, topic in enumerate(topic_names):
         executor.submit(__create_worker, index, topic, BASE_URL)
-        
+
 
 if __name__ == "__main__":
     __create_workers()
