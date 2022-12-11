@@ -2,32 +2,21 @@
 Implements very simple external task handler.
 """
 
-import logging
 import os
 import random
+
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.client.engine_client import EngineClient
-from camunda.utils.log_utils import log_with_context
+
+from job_generator import create_jobs
+from log_util import log
 
 
 ENDPOINT_KEY = "ENDPOINT"
 TOPIC_KEY = "TOPIC"
-
-logging.root.setLevel(logging.WARNING)
-
-
-def log(message: str, task: ExternalTask = None):
-    """Log utility to log with context."""
-    if task is None:
-        log_context = {"WORKER_ID": -1, "TASK_ID": -1, "TOPIC": "no_topic"}
-    else:
-        log_context = {"WORKER_ID": task.get_worker_id(),
-                       "TASK_ID": task.get_task_id(),
-                       "TOPIC": task.get_topic_name()}
-    log_with_context(message, log_context, log_level='warning')
 
 
 def __handle_task(task: ExternalTask) -> TaskResult:
@@ -39,7 +28,8 @@ def __handle_task(task: ExternalTask) -> TaskResult:
         return task.complete()
     else:
         log("failing!", task)
-        return task.failure("Random fault...", error_details="something something", max_retries=10, retry_timeout=5)
+        return task.failure("Random fault...", error_details="something something",
+                            max_retries=10, retry_timeout=5)
 
 
 def __create_worker(worker_id: int, worker_topic: str, base_url: str):
@@ -58,10 +48,11 @@ def __create_workers():
     log({"endpoint": endpoint, "topics": topics})
 
     # Creates external worker clients for each of the topics.
-    EngineClient(endpoint)
-    executor = ThreadPoolExecutor(max_workers=len(topics))
+    client = EngineClient(endpoint)
+    executor = ThreadPoolExecutor(max_workers=len(topics) + 1)
     for index, topic in enumerate(topics):
         executor.submit(__create_worker, index, topic, endpoint)
+    executor.submit(create_jobs, client)
 
 
 if __name__ == "__main__":
