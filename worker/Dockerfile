@@ -4,6 +4,6 @@ WORKDIR /src
 COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
-COPY . .
+COPY .. .
 
 CMD ["python3", "./src/main.py"]

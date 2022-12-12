@@ -20,7 +20,7 @@ services:
       - "8080:8080"
 
   camunda-ext-client:
-    build: .
+    build: worker/
     container_name: camunda-ext-client
     depends_on:
       - camunda-workflow
@@ -28,6 +28,14 @@ services:
       - ENDPOINT=camunda-workflow:8080
       - TOPIC=identifyCountries;navigateCountries
 
+  pais_ticket_broker:
+    build: ticket_broker/
+    container_name: ticket_broker
+    depends_on:
+      - camunda-workflow
+    environment:
+      - ENDPOINT=camunda-workflow:8080
+      - TOPIC=findRoutes;suggestRoutes;findTickets;buyTickets
 volumes:
   pgdata:
     driver: local
