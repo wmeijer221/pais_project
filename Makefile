@@ -3,7 +3,7 @@ all: up clean
 up: build
 	docker-compose up --force-recreate
 
-build:
+build: clean
 	docker-compose build
 
 clean:
