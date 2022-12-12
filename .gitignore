@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+!/ticket_broker/.pytest_cache/
+
+# JetBrains IDE
+.idea/
