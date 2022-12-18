@@ -1,6 +1,6 @@
-def test_tables_importable():
-    from ticket_broker.route_database import Station, Route, Company, conn
-    assert Station is not None
-    assert Route is not None
-    assert Company is not None
-    assert conn is not None
+from ticket_broker.route_database import RouteDatabase
+
+
+def test_route_database_creatable():
+    assert RouteDatabase([], {}, {}) is not None
+    assert RouteDatabase.from_file("data/railways.yaml") is not None
