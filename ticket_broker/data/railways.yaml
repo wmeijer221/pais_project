@@ -1,0 +1,243 @@
+stations:
+    bergen:
+        pretty_name: Bergen
+        gps_coordinates: [60.390062,5.334127]
+        country: "NO"
+    stavanger:
+        pretty_name: Stavanger
+        gps_coordinates: [58.966773,5.731657]
+        country: "NO"
+    kristiansand:
+        pretty_name: Kristiansand
+        gps_coordinates: [58.145645,7.987275]
+        country: "NO"
+    oslo:
+        pretty_name: Oslo
+        gps_coordinates: [59.9138688,10.7522454]
+        country: "NO"
+    arvika:
+        pretty_name: Arvika
+        gps_coordinates: [59.65333,12.59111]
+        country: "SE"
+    goteborg:
+        pretty_name: Göteborg
+        gps_coordinates: [57.709308,11.973424]
+        country: "SE"
+    karlstad:
+        pretty_name: Karlstad
+        gps_coordinates: [59.4021806,13.5114977]
+        country: "SE"
+    stockholm:
+        pretty_name: Stockholm
+        gps_coordinates: [59.330009, 18.057629]
+        country: "SE"
+    uppsala:
+        pretty_name: Uppsala Central
+        slug: uppsala-central
+        gps_coordinates: [59.858099,17.64675]
+        country: "SE"
+    linkoping:
+        pretty_name: Linköping Central
+        slug: linkoping-central
+        gps_coordinates: [58.416013,15.626676]
+        country: "SE"
+    sundsvall:
+        pretty_name: Sundsvall
+        gps_coordinates: [62.390811,17.306927]
+        country: "SE"
+    malmo:
+        pretty_name: Malmö
+        gps_coordinates: [55.60923,13.00126]
+        country: "SE"
+    kobenhavn:
+        pretty_name: København
+        gps_coordinates: [55.672721,12.564618]
+        country: "DK"
+
+companies:
+    karelian_trains:
+      name: Karelian Trains
+      train_line_name: Allegro
+    ntv:
+      name: NTV
+      train_line_name: Italo
+    trenitalia:
+      name: Trenitalia
+      train_line_name: Frecce
+    thello:
+      name: Thello
+      train_line_name:
+    eurostar:
+      name: Eurostar
+      train_line_name:
+    thalys:
+      name: Thalys
+      train_line_name:
+    railjet:
+      name: Railjet
+      train_line_name:
+    db:
+      name: Deutsche Bahn
+      train_line_name: ICE / ECE
+    sncf:
+      name: SNCF
+      train_line_name: TGV InOui
+    russian_railways:
+      name: Russian Railways
+      train_line_name: Sapsan
+    renfe:
+      name: RENFE
+      train_line_name: AVE / Alvia / Avant
+    sj:
+      name: SJ
+      train_line_name: X 2000 / SJ 3000
+    vr:
+      name: VR
+      train_line_name: Pendolino
+    westbahn:
+      name: Westbahn
+      train_line_name:
+    mtr_express:
+      name: MTR Express
+      train_line_name:
+    comboios_de_portugal:
+      name: Comboios de Portugal
+      train_line_name: Alfa Pendular
+    virgin_trains:
+      name: Virgin Trains
+      train_line_name: InterCity
+    east_midlands:
+      name: East Midlands
+      train_line_name: InterCity
+    first_great_western:
+      name: First Great Western
+      train_line_name: InterCity
+    lner:
+      name: LNER
+      train_line_name: InterCity
+    ns:
+      name: 'Nederlandse Spoorwegen'
+      train_line_name: InterCity Direct
+    snalltaget:
+      name: Snälltåget
+      train_line_name:
+    ose:
+      name: OSE
+      train_line_name: InterCity
+    southeastern_high_speed:
+      name: Southeastern High Speed
+      train_line_name:
+    turkish_railways:
+      name: Turkish Railways
+      train_line_name: Yüksek Hizli Tren
+    pkp:
+      name: PKP
+      train_line_name: Experess InterCity Premium
+    local:
+      name: Local Operator
+      train_line_name:
+
+
+routes:
+    - start_station: bergen
+      end_station: oslo
+      traveltime_seconds: 23460
+      price_eurocents_firstclass: 9230
+      price_eurocents_economy: 3640
+      company: local
+    - start_station: stavanger
+      end_station: kristiansand
+      traveltime_seconds: 11460
+      price_eurocents_firstclass: 2330
+      price_eurocents_economy: 1556
+      company: local
+    - start_station: kristiansand
+      end_station: oslo
+      traveltime_seconds: 15978
+      price_eurocents_firstclass: 3120
+      price_eurocents_economy: 2358
+      company: local
+    - start_station: oslo
+      end_station: arvika
+      traveltime_seconds: 6780
+      price_eurocents_firstclass: 2352
+      price_eurocents_economy: 1533
+      company: local
+    - start_station: oslo
+      end_station: goteborg
+      traveltime_seconds: 10800
+      price_eurocents_firstclass: 3351
+      price_eurocents_economy: 2755
+      company: local
+    - start_station: arvika
+      end_station: karlstad
+      traveltime_seconds: 5788
+      price_eurocents_firstclass: 1622
+      price_eurocents_economy: 1222
+      company: sj
+    - start_station: karlstad
+      end_station: stockholm
+      traveltime_seconds: 13980
+      price_eurocents_firstclass: 3360
+      price_eurocents_economy: 2755
+      company: sj
+    - start_station: karlstad
+      end_station: goteborg
+      traveltime_seconds: 14510
+      price_eurocents_firstclass: 4266
+      price_eurocents_economy: 3220
+      company: sj
+    - start_station: stockholm
+      end_station: goteborg
+      traveltime_seconds: 12780
+      price_eurocents_firstclass: 5520
+      price_eurocents_economy: 2340
+      company: mtr_express
+    - start_station: stockholm
+      end_station: goteborg
+      traveltime_seconds: 11750
+      price_eurocents_firstclass: 7620
+      price_eurocents_economy: 3350
+      company: sj
+    - start_station: stockholm
+      end_station: uppsala
+      traveltime_seconds: 6522
+      price_eurocents_firstclass: 3387
+      price_eurocents_economy: 2344
+      company: sj
+    - start_station: uppsala
+      end_station: sundsvall
+      traveltime_seconds: 14850
+      price_eurocents_firstclass: 7880
+      price_eurocents_economy: 4560
+      company: sj
+    - start_station: stockholm
+      end_station: linkoping
+      traveltime_seconds: 7510
+      price_eurocents_firstclass: 5520
+      price_eurocents_economy: 3278
+      company: sj
+    - start_station: linkoping
+      end_station: malmo
+      traveltime_seconds: 14580
+      price_eurocents_firstclass: 6450
+      price_eurocents_economy: 5100
+      company: sj
+    - start_station: stockholm
+      end_station: malmo
+      traveltime_seconds: 20142
+      price_eurocents_firstclass: 12540
+      price_eurocents_economy: 9910
+      company: snalltaget # Snälltåget
+    - start_station: goteborg
+      end_station: malmo
+      traveltime_seconds: 14510
+      price_eurocents_firstclass: 7512
+      price_eurocents_economy: 3655
+      company: sj
+    - start_station: malmo
+      end_station: kobenhavn
+      traveltime_seconds: 4260
+      price_eurocents_firstclass: 4212
+      price_eurocents_economy: 2355
+      company: sj
