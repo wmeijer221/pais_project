@@ -1,0 +1,87 @@
+{
+  "components": [
+    {
+      "text": "# Book your journey",
+      "type": "text",
+      "id": "Field_1lua2zc"
+    },
+    {
+      "values": [
+        {
+          "label": "Copenhagen",
+          "value": "kobnhavn"
+        },
+        {
+          "label": "Stockholm",
+          "value": "stockholm"
+        }
+      ],
+      "label": "Starting Station",
+      "type": "select",
+      "id": "Field_1kbmkh7",
+      "key": "start_station",
+      "description": "This is the station where your journey will begin",
+      "defaultValue": "kobnhavn",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "Copenhagen",
+          "value": "kobnhavn"
+        },
+        {
+          "label": "Stockholm",
+          "value": "stockholm"
+        }
+      ],
+      "label": "Destination",
+      "type": "select",
+      "id": "Field_1u6p2em",
+      "key": "end_station",
+      "description": "This is the final station in the journey",
+      "defaultValue": "stockholm",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "First Class",
+          "value": "first"
+        },
+        {
+          "label": "Economy",
+          "value": "economy"
+        }
+      ],
+      "label": "Class",
+      "type": "radio",
+      "id": "Field_0i7db6m",
+      "key": "class",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "1"
+    },
+    {
+      "action": "submit",
+      "label": "Look for routes",
+      "type": "button",
+      "id": "Field_0r22qpi",
+      "key": "field_1442e0o"
+    }
+  ],
+  "type": "default",
+  "id": "journey_spec_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}
