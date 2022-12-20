@@ -1,50 +1,82 @@
-import sqlalchemy as db
-from sqlalchemy.orm import declarative_base, relationship, Mapped
+import copy
+from typing import List, Dict
+from pathlib import Path
 
-_ENGINE = db.create_engine("sqlite:///data/railways.sqlite3")
-_METADATA = db.MetaData()
-
-conn = _ENGINE.connect()
-Base = declarative_base()
+import networkx as nx
+import yaml
 
 
-class Station(Base):
-    __tablename__ = "stations"
+class RouteDatabase:
+    """
+    Object that holds and constructs a network graph of all known routes.
+    Can also be asked to generate routes based on certain criteria.
+    """
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    slug = db.Column(db.Text)
-    latitude = db.Column(db.REAL)
-    longitude = db.Column(db.REAL)
-    country = db.Column(db.Text)
-    time_zone = db.Column(db.Text)
-    is_city = db.Column(db.Text)
-    is_main_station = db.Column(db.Text)
-    is_airport = db.Column(db.Text)
-    country_hint = db.Column(db.Text)
-    same_as = db.Column(db.Integer)
-    normalised_code = db.Column('normalised_code', db.Text)
-    iata_airport_code = db.Column('iata_airport_code', db.Text)
+    def __init__(self, routes: List[Dict], stations: Dict, companies: Dict):
+        """
+        Creates a route database, loading it into a graph from a list.
+        """
+        self._routes = routes
+        self._stations = stations
+        self._companies = companies
+        self.graph = self._init_network_graph()
 
-    routes = relationship("Route", primaryjoin="or_(Route.start_station==Station.id,Route.end_station==Station.id )")
+    def _init_network_graph(self, routes = None, stations = None):
+        """
+        Method for loading in the routing information into a networkx graph.
+        That graph can then be used to determine the different pathing options.
+        """
+        if stations is None:
+            stations = self._stations
+        if routes is None:
+            routes = self._routes
 
+        graph = nx.MultiGraph()
+        self._load_nodes(stations, graph=graph)
+        self._load_routes(routes, graph=graph)
 
-class Route(Base):
-    __tablename__ = "routes"
+        return graph
 
-    id = db.Column(db.Integer, primary_key=True)
-    start_station = db.Column(db.Integer, db.ForeignKey('stations.id'))
-    end_station = db.Column(db.Integer, db.ForeignKey('stations.id'))
+    def _load_nodes(self, stations: Dict, graph = None):
+        """
+        Loads a set of nodes into the local graph.
+        """
+        if graph is None:
+            graph = self.graph
 
-    traveltime_seconds = db.Column(db.Integer)
-    price_eurocents_firstclass = db.Column(db.Integer)
-    price_eurocents_economy = db.Column(db.Integer)
-    company = db.Column(db.Integer, db.ForeignKey("company.id"))
+        for key, values in stations.items():
+            graph.add_node(key, **values)
 
+        return graph
 
-class Company(Base):
-    __tablename__ = "companies"
+    def _load_routes(self, routes: List[Dict], graph = None):
+        """
+        Loads a set of routes into the existing network graph.
+        It is expected that the nodes have already been loaded using _load_nodes.
+        Failure to do so will result in missing metadata.
+        """
+        if graph is None:
+            graph = self.graph
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    train_line_name = db.Column(db.Text)
+        for route in routes:
+            route_metadata = copy.deepcopy(route)
+            route_metadata.pop('start_station')
+            route_metadata.pop('end_station')
+            graph.add_edge(route['start_station'],
+                           route['end_station'],
+                           **route_metadata)
+        return graph
+
+    @classmethod
+    def from_file(cls, file_path: Path):
+        """
+        Creates a route database by loading routes and stations from a file.
+        """
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
+
+        with open(file_path, "r") as file_descriptor:
+            file_contents: str = file_descriptor.read()
+            railway_data = yaml.load(file_contents, Loader=yaml.SafeLoader)
+
+        return cls(railway_data["routes"], railway_data["stations"], railway_data["companies"])
