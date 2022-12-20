@@ -3,12 +3,12 @@
   <bpmn:collaboration id="booking_flow">
     <bpmn:participant id="Participant_03utb43" name="Customer" processRef="Process_03a8zn7" />
     <bpmn:participant id="Participant_0bnjzeh" name="Ticket Broker" processRef="Process_1oyf38q" />
-    <bpmn:messageFlow id="message_flow_send_journey" sourceRef="Activity_0kshob5" targetRef="receive_journey_specification" />
     <bpmn:messageFlow id="Flow_1kxf5u4" sourceRef="find_route_options" targetRef="receive_journey_options" />
     <bpmn:messageFlow id="Flow_17w097p" sourceRef="place_order" targetRef="wait_for_order" />
     <bpmn:messageFlow id="Flow_1gtwswc" sourceRef="verify_payment_info" targetRef="receive_order_confirmation" />
     <bpmn:messageFlow id="Flow_07acwrm" sourceRef="send_ticket_bundle" targetRef="receive_ticket_bundle" />
     <bpmn:messageFlow id="Flow_1sfvhv9" sourceRef="send_order_declined" targetRef="receive_order_failed" />
+    <bpmn:messageFlow id="message_flow_send_journey" sourceRef="specify_parameters_for_journey" targetRef="receive_journey_specification" />
   </bpmn:collaboration>
   <bpmn:process id="Process_03a8zn7" isExecutable="true">
     <bpmn:extensionElements>
@@ -112,6 +112,7 @@
       <bpmn:outgoing>Flow_0khrnne</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:intermediateCatchEvent id="receive_journey_options" name="receive journey options">
+      <bpmn:incoming>Flow_0uwubj3</bpmn:incoming>
       <bpmn:outgoing>Flow_1376j8f</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1n672x9" messageRef="Message_3l60vad" />
     </bpmn:intermediateCatchEvent>
@@ -168,23 +169,20 @@
       <bpmn:incoming>Flow_no_wanted_options</bpmn:incoming>
       <bpmn:outgoing>Flow_1uvme0m</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0uwubj3" sourceRef="specify_parameters_for_journey" targetRef="receive_journey_options" />
     <bpmn:userTask id="specify_parameters_for_journey" name="specify parameters for journey">
       <bpmn:extensionElements>
         <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_311066i" />
         <zeebe:ioMapping>
           <zeebe:output source="=string(now())" target="interaction_id" />
+          <zeebe:output source="=class" target="class" />
+          <zeebe:output source="=start_station" target="start_station" />
+          <zeebe:output source="=end_station" target="end_station" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1uvme0m</bpmn:incoming>
-      <bpmn:outgoing>Flow_018yk8f</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0uwubj3</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_018yk8f" sourceRef="specify_parameters_for_journey" targetRef="Activity_0kshob5" />
-    <bpmn:sendTask id="Activity_0kshob5" name="send journey specification">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="send_journey_specification" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_018yk8f</bpmn:incoming>
-    </bpmn:sendTask>
   </bpmn:process>
   <bpmn:process id="Process_1oyf38q" isExecutable="false">
     <bpmn:serviceTask id="find_route_options" name="find route options">
@@ -355,11 +353,7 @@
         <dc:Bounds x="325" y="185" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0mmv2qf_di" bpmnElement="specify_parameters_for_journey">
-        <dc:Bounds x="410" y="170" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0vpkm3o_di" bpmnElement="Activity_0kshob5">
-        <dc:Bounds x="550" y="170" width="100" height="80" />
+        <dc:Bounds x="450" y="170" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1iazujz_di" bpmnElement="Flow_start_booking">
@@ -368,7 +362,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1uvme0m_di" bpmnElement="Flow_1uvme0m">
         <di:waypoint x="375" y="210" />
-        <di:waypoint x="410" y="210" />
+        <di:waypoint x="450" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1376j8f_di" bpmnElement="Flow_1376j8f">
         <di:waypoint x="708" y="210" />
@@ -415,9 +409,9 @@
         <di:waypoint x="1298" y="290" />
         <di:waypoint x="1372" y="290" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_018yk8f_di" bpmnElement="Flow_018yk8f">
-        <di:waypoint x="510" y="210" />
+      <bpmndi:BPMNEdge id="Flow_0uwubj3_di" bpmnElement="Flow_0uwubj3">
         <di:waypoint x="550" y="210" />
+        <di:waypoint x="672" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_0bnjzeh_di" bpmnElement="Participant_0bnjzeh" isHorizontal="true">
         <dc:Bounds x="160" y="390" width="1690" height="310" />
@@ -521,9 +515,7 @@
         <di:waypoint x="912" y="490" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15tt396_di" bpmnElement="message_flow_send_journey">
-        <di:waypoint x="600" y="250" />
-        <di:waypoint x="600" y="361" />
-        <di:waypoint x="500" y="361" />
+        <di:waypoint x="500" y="250" />
         <di:waypoint x="500" y="472" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kxf5u4_di" bpmnElement="Flow_1kxf5u4">

@@ -1,6 +1,5 @@
-import os
-import time
+import asyncio
 
-while True:
-    print("Hi, I'm the stub for the ticket broker, and I'm working!", flush=True)
-    time.sleep(1)
+from ticket_broker.worker import run_worker
+
+asyncio.run(run_worker())

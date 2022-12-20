@@ -117,25 +117,6 @@ services:
     profiles:
       - kibana
 
-  rabbitmq:
-    image: 3.11.5
-    container_name: rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - camunda-platform
-  pais_ticket_broker:
-    build: ticket_broker/
-    container_name: ticket_broker
-    links:
-      - zeebe
-    depends_on:
-      - zeebe
-    environment:
-      - "ENDPOINT_HOST=zeebe"
-      - "ENDPOINT_PORT=26500"
-
 volumes:
   zeebe:
   elastic:
