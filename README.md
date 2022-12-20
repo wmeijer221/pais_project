@@ -7,6 +7,5 @@ When you launched the system, go to [this page](http://localhost:8080/camunda/ap
 Log in with credentials username: ``demo``, password: ``demo``. 
 
 ## Stack
-
-- Camunda 7.18
+- Camunda 8.1 
 
