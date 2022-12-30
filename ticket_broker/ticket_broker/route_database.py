@@ -40,8 +40,7 @@ class RouteDatabase:
             leg_end = intermediate_stations[i+1]
 
             leg_data = {"start_station": leg_start,
-                        "end_station": leg_end,
-                        "route_data": {}}
+                        "end_station": leg_end}
 
             edges = self.graph.get_edge_data(leg_start, leg_end)
 
@@ -57,7 +56,7 @@ class RouteDatabase:
                     if edge[weight] < best_weight_value:
                         best_option = key
 
-            leg_data["route_data"] = edges[best_option]
+            leg_data.update(edges[best_option])
             legs.append(leg_data)
 
         return [legs]
