@@ -110,7 +110,7 @@
       "values": [
         {
           "label": "Copenhagen",
-          "value": "kobnhavn"
+          "value": "kobenhavn"
         },
         {
           "label": "Stockholm",
@@ -122,7 +122,7 @@
       "id": "Field_1kbmkh7",
       "key": "start_station",
       "description": "This is the station where your journey will begin",
-      "defaultValue": "kobnhavn",
+      "defaultValue": "kobenhavn",
       "validate": {
         "required": true
       }
@@ -131,7 +131,7 @@
       "values": [
         {
           "label": "Copenhagen",
-          "value": "kobnhavn"
+          "value": "kobenhavn"
         },
         {
           "label": "Stockholm",
@@ -241,6 +241,11 @@
       <bpmn:terminateEventDefinition id="TerminateEventDefinition_0w181sj" />
     </bpmn:endEvent>
     <bpmn:intermediateCatchEvent id="receive_journey_options" name="receive journey options">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=route_options" target="route_options" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0i3qulw</bpmn:incoming>
       <bpmn:outgoing>Flow_1376j8f</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1n672x9" messageRef="Message_3l60vad" />
@@ -359,6 +364,7 @@
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=journey_specification" target="journey_specification" />
+          <zeebe:output source="=order_id" target="order_id" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_18x503c</bpmn:outgoing>
@@ -366,7 +372,12 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="find_route_options" name="find route options">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="find_route" />
+        <zeebe:taskDefinition type="find_route_options" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=journey_specification" target="journey_specification" />
+          <zeebe:input source="=order_id" target="order_id" />
+          <zeebe:output source="=route_options" target="route_options" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18x503c</bpmn:incoming>
       <bpmn:outgoing>Flow_0m1qd5a</bpmn:outgoing>

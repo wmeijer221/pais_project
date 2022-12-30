@@ -9,7 +9,7 @@
       "values": [
         {
           "label": "Copenhagen",
-          "value": "kobnhavn"
+          "value": "kobenhavn"
         },
         {
           "label": "Stockholm",
@@ -21,7 +21,7 @@
       "id": "Field_1kbmkh7",
       "key": "start_station",
       "description": "This is the station where your journey will begin",
-      "defaultValue": "kobnhavn",
+      "defaultValue": "kobenhavn",
       "validate": {
         "required": true
       }
@@ -30,7 +30,7 @@
       "values": [
         {
           "label": "Copenhagen",
-          "value": "kobnhavn"
+          "value": "kobenhavn"
         },
         {
           "label": "Stockholm",
