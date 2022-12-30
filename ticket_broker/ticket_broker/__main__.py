@@ -1,1 +1,3 @@
-import ticket_broker.worker
+from .worker import run_loop
+
+run_loop()

@@ -21,26 +21,21 @@ client = ZeebeClient(channel)
 
 
 @worker.task(task_type="send_journey_specification")
-async def send_journey_specification(journey_specification: Dict):
+async def send_journey_specification(journey_specification: Dict, order_id: str):
     """
     Finds routes based on input
     """
     print(f"Received job: {journey_specification}")
 
-    correlationKey = str(uuid.uuid4())
-
     message = {
-        "correlationKey": correlationKey,
-        "start_station": journey_specification["start_station"],
-        "end_station": journey_specification["end_station"],
-        "class": journey_specification["class"]
+        "order_id": order_id,
+        "journey_specification": journey_specification
     }
 
     print("publishing message to ticket broker")
-    await client.publish_message("find_journey", correlationKey, message)
-
-    return {"correlationKey": correlationKey}
+    await client.publish_message("find_journey", str(order_id), message)
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(worker.work())
+def run_loop():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(worker.work())
