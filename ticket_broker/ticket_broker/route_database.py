@@ -2,6 +2,7 @@ import copy
 from typing import List, Dict
 from pathlib import Path
 
+import logging
 import networkx as nx
 import yaml
 
@@ -18,8 +19,8 @@ class RouteDatabase:
         """
         self._routes = routes
         self._stations = stations
-        self._companies = companies
-        self.graph = self._init_network_graph()
+        self.companies = companies
+        self._init_network_graph()
 
     def find_route_options(self, start_station, end_station, weight):
         """
@@ -37,29 +38,36 @@ class RouteDatabase:
 
         for i in range(len(intermediate_stations) - 1):
             leg_start = intermediate_stations[i]
-            leg_end = intermediate_stations[i+1]
+            leg_end = intermediate_stations[i + 1]
 
             leg_data = {"start_station": leg_start,
                         "end_station": leg_end}
 
-            edges = self.graph.get_edge_data(leg_start, leg_end)
-
-            print(f"LEG DATA FROM {leg_start} to {leg_end}:\n EDGES: {edges}")
-
-            if len(edges) == 1:
-                best_option = 0
-            else:
-                # If we have multiple choices for one leg, we choose the right one by the weight
-                best_option = 0
-                best_weight_value = edges[0][weight]
-                for key, edge in edges.items():
-                    if edge[weight] < best_weight_value:
-                        best_option = key
-
-            leg_data.update(edges[best_option])
+            leg_data.update(self._select_best_leg(leg_start, leg_end, weight))
             legs.append(leg_data)
 
         return [legs]
+
+    def _select_best_leg(self, leg_start, leg_end, weight):
+        """
+        Selects the best option for a certain leg of the journey,
+        based on the weight condition. Will select the smallest weight.
+        """
+        edges = self.graph.get_edge_data(leg_start, leg_end)
+
+        logging.debug(f"LEG DATA FROM {leg_start} to {leg_end}:\n EDGES: {edges}")
+
+        if len(edges) == 1:
+            best_option = 0
+        else:
+            # If we have multiple choices for one leg, we choose the right one by the weight
+            best_option = 0
+            best_weight_value = edges[0][weight]
+            for key, edge in edges.items():
+                if edge[weight] < best_weight_value:
+                    best_option = key
+
+        return edges[best_option]
 
     def _init_network_graph(self, routes=None, stations=None):
         """
@@ -71,41 +79,36 @@ class RouteDatabase:
         if routes is None:
             routes = self._routes
 
-        graph = nx.MultiGraph()
-        self._load_nodes(stations, graph=graph)
-        self._load_routes(routes, graph=graph)
+        self.graph = nx.MultiGraph()
+        self._load_nodes(stations)
+        self._load_routes(routes)
 
-        return graph
+        return self.graph
 
-    def _load_nodes(self, stations: Dict, graph=None):
+    def _load_nodes(self, stations: Dict):
         """
         Loads a set of nodes into the local graph.
         """
-        if graph is None:
-            graph = self.graph
-
         for key, values in stations.items():
-            graph.add_node(key, **values)
+            self.graph.add_node(key, **values)
 
-        return graph
+        return self.graph
 
-    def _load_routes(self, routes: List[Dict], graph=None):
+    def _load_routes(self, routes: List[Dict]):
         """
         Loads a set of routes into the existing network graph.
         It is expected that the nodes have already been loaded using _load_nodes.
         Failure to do so will result in missing metadata.
         """
-        if graph is None:
-            graph = self.graph
 
         for route in routes:
             route_metadata = copy.deepcopy(route)
             route_metadata.pop('start_station')
             route_metadata.pop('end_station')
-            graph.add_edge(route['start_station'],
+            self.graph.add_edge(route['start_station'],
                            route['end_station'],
                            **route_metadata)
-        return graph
+        return self.graph
 
     @classmethod
     def from_file(cls, file_path: Path):

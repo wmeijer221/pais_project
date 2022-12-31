@@ -54,7 +54,7 @@ async def find_route_options(journey_specification: Dict, order_id: str):
 
     message = {"route_options": options}
     await client.publish_message("receive_journey_options", str(order_id), message)
-
+    
     return message
 
 

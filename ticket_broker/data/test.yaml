@@ -1,0 +1,45 @@
+stations:
+    a:
+        pretty_name: Test station A
+        gps_coordinates: [60.390062,5.334127]
+        country: "AA"
+    b:
+        pretty_name: Test station B
+        gps_coordinates: [58.966773,5.731657]
+        country: "BB"
+    c:
+        pretty_name: Test station C
+        gps_coordinates: [58.145645,7.987275]
+        country: "CC"
+
+companies:
+    corp_a:
+      name: Test Corporation A
+      train_line_name: TEST A-RAIL
+    corp_b:
+      name: Test Corporation B
+      train_line_name: TEST B-RAIL
+    local:
+      name: Local Operator
+      train_line_name: ""
+
+
+routes:
+    - start_station: a
+      end_station: b
+      traveltime_seconds: 10
+      price_eurocents_firstclass: 200
+      price_eurocents_economy: 100
+      company: corp_a
+    - start_station: a
+      end_station: b
+      traveltime_seconds: 15
+      price_eurocents_firstclass: 100
+      price_eurocents_economy: 50
+      company: corp_b
+    - start_station: b
+      end_station: c
+      traveltime_seconds: 20
+      price_eurocents_firstclass: 100
+      price_eurocents_economy: 100
+      company: local
