@@ -30,12 +30,19 @@ class RouteDatabase:
         end_station: The station to end the journey.
         weight: the name of the edge weight to use. Look in railways.yaml for the metadata with each route.
 
+        return: a list of journey options, each journey is a dict with the following keys:
+            - label : display name for the form UI
+            - value : the individual legs in the route. This item is named in such a way to ensure compatibility with
+                      the radio button in CAMUNDA forms, which expects this key.
         For now, we only return one option.
         """
         intermediate_stations = nx.shortest_path(self.graph, start_station, end_station, weight=weight)
 
-        legs = []
+        journey = {
+            "label": f"Journey from {start_station} to {end_station} consisting of: \n"
+        }
 
+        legs = []
         for i in range(len(intermediate_stations) - 1):
             leg_start = intermediate_stations[i]
             leg_end = intermediate_stations[i + 1]
@@ -46,7 +53,11 @@ class RouteDatabase:
             leg_data.update(self._select_best_leg(leg_start, leg_end, weight))
             legs.append(leg_data)
 
-        return [legs]
+            journey["label"] += f"Leg from {leg_start} to {leg_end} with {leg_data['company']}\n"
+
+        journey["value"] = legs
+
+        return [journey]
 
     def _select_best_leg(self, leg_start, leg_end, weight):
         """

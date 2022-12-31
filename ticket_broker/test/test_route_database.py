@@ -37,8 +37,8 @@ def test_find_route():
     route_a_c_cheapest = rdb.find_route_options("a", "c", "price_eurocents_economy")[0]
 
     # Test that the algorithm prioritises the right thing
-    assert len(route_a_c_fastest) == 2
-    assert route_a_c_fastest[0]["company"] == "corp_a"
+    assert len(route_a_c_fastest["value"]) == 2
+    assert route_a_c_fastest["value"][0]["company"] == "corp_a"
 
-    assert len(route_a_c_cheapest) == 2
-    assert route_a_c_cheapest[0]["company"] == "corp_b"
+    assert len(route_a_c_cheapest["value"]) == 2
+    assert route_a_c_cheapest["value"][0]["company"] == "corp_b"
