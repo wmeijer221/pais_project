@@ -132,7 +132,7 @@ services:
     networks:
       - camunda-platform
 
-  pais_ticket_broker:
+  ticket_broker:
     build: ticket_broker/
     container_name: ticket_broker
     links:
