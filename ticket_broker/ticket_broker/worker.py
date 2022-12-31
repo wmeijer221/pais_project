@@ -3,6 +3,7 @@ Module for handling CAMUNDA tasks.
 """
 import asyncio
 import logging
+import os
 import uuid
 
 from typing import Dict
@@ -14,8 +15,13 @@ from ticket_broker.route_database import RouteDatabase
 
 rdb = RouteDatabase.from_file(Path("data/railways.yaml"))
 
+if "ENDPOINT_HOST" in os.environ.keys() and "ENDPOINT_PORT" in os.environ.keys():
+    channel = create_insecure_channel(hostname=os.environ["ENDPOINT_HOST"], port=int(os.environ["ENDPOINT_PORT"]))
+else:
+    logging.warning("No endpoint specified. Using defaults!")
+    channel = create_insecure_channel()
+
 print("Creating ticket_broker worker")
-channel = create_insecure_channel()
 worker = ZeebeWorker(channel)
 client = ZeebeClient(channel)
 
