@@ -1,10 +1,10 @@
 import pytest
 
-from ticket_broker.bank_verifier import BankVerifier
+from ticket_broker.controlers.bank_verifier import BankController
 
 
 def test_bank_verifier():
-    verifier = BankVerifier()
+    verifier = BankController()
     details = {
         "iban": "NL02RABO0123456789"
     }
