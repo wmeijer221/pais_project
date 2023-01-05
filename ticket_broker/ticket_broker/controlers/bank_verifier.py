@@ -22,7 +22,7 @@ class RandomChanceBankVerifier(AbstractBankVerifier):
     def verify(self, iban: str) -> bool:
         return random.random() > self.verify_failure_chance
 
-    def pay(self, source_iban: str, target_iban: str) -> bool:
+    def pay(self, source_iban: str, target_iban: str, cost_in_eurocents: int) -> bool:
         return random.random() > self.payment_failure_chance
 
 class BankController:

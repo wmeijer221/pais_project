@@ -39,9 +39,10 @@ async def select_user_trip(option_selected_id: str, route_options: list[dict[str
 
 @worker.task(task_type="book_tickets", exception_handler=on_error, before=[logging_task_decorator])
 async def book_tickets(billing_information: Dict, selected_option: dict[str, str], order_id: str):
-    success, tickets_details = journey_booker.book_journey(selected_option, billing_information)
+    success, tickets_details = journey_booker.book_journey(
+        selected_option, billing_information)
     if success:
         await client.publish_message("confirm_order", str(order_id))
-        return { "tickets_details": tickets_details }
+        return {"tickets_details": tickets_details}
     else:
         raise Exception("Could not order tickets.")

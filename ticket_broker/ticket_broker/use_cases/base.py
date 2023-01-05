@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 from pyzeebe import Job
 
