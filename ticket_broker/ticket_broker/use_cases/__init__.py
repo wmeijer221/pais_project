@@ -1,2 +1,3 @@
+import ticket_broker.use_cases.base
 import ticket_broker.use_cases.booking_the_journey
 import ticket_broker.use_cases.finding_the_journey

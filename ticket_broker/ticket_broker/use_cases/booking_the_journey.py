@@ -38,17 +38,6 @@ async def verify_payment_info(billing_information: Dict):
         raise Exception("Could not verify billing information.")
 
 
-@worker.task(task_type="select_user_trip")
-async def select_user_trip(option_selected_id: str, route_options: list[dict[str, str]]):
-    """
-    Forwards the details of the chosen option from the list of options.
-    """
-
-    # TODO: refactor this to be a generic "selection from key" task.
-    index = int(option_selected_id)
-    selected_option = route_options[index]
-    return {"selected_option": selected_option}
-
 
 @worker.task(task_type="book_tickets", exception_handler=on_error, before=[logging_task_decorator])
 async def book_tickets(billing_information: Dict, selected_option: dict[str, str], order_id: str):

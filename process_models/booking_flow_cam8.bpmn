@@ -407,10 +407,10 @@
     <bpmn:sequenceFlow id="Flow_18udxah" sourceRef="select_user_trip" targetRef="Gateway_19t74gf" />
     <bpmn:serviceTask id="select_user_trip" name="select user trip">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="select_user_trip" />
+        <zeebe:taskDefinition type="select_option_from_key" />
         <zeebe:ioMapping>
-          <zeebe:input source="=route_options" target="route_options" />
-          <zeebe:input source="=option_selected_id" target="option_selected_id" />
+          <zeebe:input source="=route_options" target="options" />
+          <zeebe:input source="=option_selected_id" target="key" />
           <zeebe:output source="=selected_option" target="selected_option" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
