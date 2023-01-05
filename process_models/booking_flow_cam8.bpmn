@@ -308,10 +308,11 @@
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="send_specifications_to_ticket_broker" name="send specifications to ticket broker">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="send_journey_specification" />
+        <zeebe:taskDefinition type="send_message_forward_data" />
         <zeebe:ioMapping>
-          <zeebe:input source="=journey_specification" target="journey_specification" />
-          <zeebe:input source="=order_id" target="order_id" />
+          <zeebe:input source="=&#34;find_journey&#34;" target="name" />
+          <zeebe:input source="=order_id" target="correlation_key" />
+          <zeebe:input source="={&#10;  journey_specification: journey_specification,&#10;  order_id: order_id&#10;}" target="variables" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tu4n9v</bpmn:incoming>
@@ -376,11 +377,11 @@
     </bpmn:eventBasedGateway>
     <bpmn:intermediateThrowEvent id="send_order_placement" name="send order placement">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="send_order_placement" />
+        <zeebe:taskDefinition type="send_message_forward_data" />
         <zeebe:ioMapping>
-          <zeebe:input source="=billing_information" target="billing_information" />
-          <zeebe:input source="=option_selected_id" target="option_selected_id" />
-          <zeebe:input source="=order_id" target="order_id" />
+          <zeebe:input source="=order_id" target="correlation_key" />
+          <zeebe:input source="=&#34;wait_for_order&#34;" target="name" />
+          <zeebe:input source="={&#10;  billing_information: billing_information,&#10;  option_selected_id: option_selected_id,&#10;  order_id: order_id&#10;}" target="variables" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0o1mlnq</bpmn:incoming>
@@ -729,7 +730,7 @@
         <di:waypoint x="350" y="190" />
         <di:waypoint x="350" y="265" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="644" y="172" width="53" height="27" />
+          <dc:Bounds x="644" y="156" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1e14jc9_di" bpmnElement="Flow_satisfied">

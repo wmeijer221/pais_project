@@ -14,20 +14,6 @@ bank_verifier = BankController()
 journey_booker = JourneyBooker()
 
 
-@worker.task(task_type="send_order_placement")
-async def send_order_placement(billing_information: Dict, option_selected_id: str, order_id: str):
-    """
-    Message exchange logic for moving a message from the consumer to the broker.
-    """
-
-    # TODO: This is boilerplate code; is there a way to remove this?
-    message = {
-        "billing_information": billing_information,
-        "option_selected_id": option_selected_id
-    }
-    await client.publish_message("wait_for_order", str(order_id), message)
-
-
 @worker.task(task_type="verify_payment_info", exception_handler=on_error)
 async def verify_payment_info(job: Job, billing_information: Dict):
     """

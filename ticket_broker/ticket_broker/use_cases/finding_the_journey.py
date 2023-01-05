@@ -10,20 +10,6 @@ worker, client = WorkerInstance.get()
 
 rdb = RouteDatabase.from_file(Path("data/railways.yaml"))
 
-@worker.task(task_type="send_journey_specification", before=[logging_task_decorator])
-async def send_journey_specification(journey_specification: Dict, order_id: str):
-    """
-    Sends the message to initialise the broker pool.
-    """
-
-    # TODO: This is boilerplate code; is there a way to remove this?
-    message = {
-        "order_id": order_id,
-        "journey_specification": journey_specification
-    }
-
-    await client.publish_message("find_journey", str(order_id), message)
-
 
 @worker.task(task_type="find_route_options", before=[logging_task_decorator])
 async def find_route_options(journey_specification: Dict, order_id: str):
