@@ -53,3 +53,16 @@ async def send_message_forward_data(name: str, correlation_key: str, variables: 
         name=name,
         correlation_key=str(correlation_key),
         variables=variables)
+
+
+@worker.task(task_type="send_message",
+             exception_handler=on_error,
+             before=[logging_task_decorator])
+async def send_message(name: str, correlation_key: str):
+    """
+    Forwards message to the provided target.
+    """
+
+    await client.publish_message(
+        name=name,
+        correlation_key=str(correlation_key))

@@ -6,9 +6,10 @@
     <bpmn:messageFlow id="Flow_1kxf5u4" sourceRef="find_route_options" targetRef="receive_journey_options" />
     <bpmn:messageFlow id="Flow_17w097p" sourceRef="send_order_placement" targetRef="wait_for_order" />
     <bpmn:messageFlow id="Flow_1gtwswc" sourceRef="book_tickets" targetRef="receive_order_confirmation" />
-    <bpmn:messageFlow id="Flow_07acwrm" sourceRef="send_ticket_bundle" targetRef="receive_ticket_bundle" />
+    <bpmn:messageFlow id="Flow_07acwrm" sourceRef="assemble_and_send_ticket_bundle" targetRef="receive_ticket_bundle" />
     <bpmn:messageFlow id="Flow_1sfvhv9" sourceRef="send_order_declined" targetRef="receive_order_failed" />
     <bpmn:messageFlow id="Flow_0sjwsjb" sourceRef="send_specifications_to_ticket_broker" targetRef="receive_journey_specification" />
+    <bpmn:messageFlow id="Flow_0ci6r3y" sourceRef="send_retry_message" targetRef="Event_1t3sx9l" />
     <bpmn:group id="Group_0xcsi01" categoryValueRef="CategoryValue_0p53zgh" />
     <bpmn:group id="Group_0dgr1tw" categoryValueRef="CategoryValue_1hkieqt" />
   </bpmn:collaboration>
@@ -303,7 +304,7 @@
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_1f5ukgs">
       <bpmn:incoming>Flow_start_booking</bpmn:incoming>
-      <bpmn:incoming>Flow_no_wanted_options</bpmn:incoming>
+      <bpmn:incoming>Flow_1e64cnl</bpmn:incoming>
       <bpmn:outgoing>Flow_1uvme0m</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="send_specifications_to_ticket_broker" name="send specifications to ticket broker">
@@ -343,7 +344,7 @@
       <bpmn:outgoing>Flow_0o1mlnq</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0khrnne" sourceRef="Activity_0koua8h" targetRef="satisfied_with_option" />
-    <bpmn:sequenceFlow id="Flow_no_wanted_options" name="No wanted options" sourceRef="satisfied_with_option" targetRef="Gateway_1f5ukgs">
+    <bpmn:sequenceFlow id="Flow_no_wanted_options" name="No wanted options" sourceRef="satisfied_with_option" targetRef="send_retry_message">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=option_selected_id = null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_satisfied" sourceRef="satisfied_with_option" targetRef="place_order" />
@@ -397,6 +398,19 @@
     <bpmn:endEvent id="Event_0rgkr6v" name="Booking unsuccessful">
       <bpmn:incoming>Flow_11pyg7e</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1e64cnl" sourceRef="send_retry_message" targetRef="Gateway_1f5ukgs" />
+    <bpmn:intermediateThrowEvent id="send_retry_message" name="Send Retry Message">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;send_retry_message&#34;" target="name" />
+          <zeebe:input source="=order_id" target="correlation_key" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_no_wanted_options</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e64cnl</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0o932an" />
+    </bpmn:intermediateThrowEvent>
   </bpmn:process>
   <bpmn:process id="Process_1oyf38q" name="Ticket Brokerage Flow" isExecutable="true">
     <bpmn:startEvent id="receive_journey_specification" name="Receive journey specification">
@@ -423,8 +437,9 @@
     </bpmn:serviceTask>
     <bpmn:eventBasedGateway id="Gateway_04x62t8">
       <bpmn:incoming>Flow_0m1qd5a</bpmn:incoming>
-      <bpmn:outgoing>Flow_1p3bbyz</bpmn:outgoing>
       <bpmn:outgoing>Flow_15ub6z1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1p3bbyz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1gbage5</bpmn:outgoing>
     </bpmn:eventBasedGateway>
     <bpmn:intermediateCatchEvent id="Event_1ag1j7v" name="Wait 10 minutes">
       <bpmn:incoming>Flow_15ub6z1</bpmn:incoming>
@@ -449,11 +464,13 @@
       <bpmn:incoming>Flow_1t04ep0</bpmn:incoming>
       <bpmn:outgoing>Flow_0lolztr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sendTask id="send_ticket_bundle" name="Assemble and send ticket bundle">
+    <bpmn:sendTask id="assemble_and_send_ticket_bundle" name="Assemble and send ticket bundle">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="send_ticket_bundle" />
+        <zeebe:taskDefinition type="send_message_forward_data" />
         <zeebe:ioMapping>
-          <zeebe:input source="=tickets_details" target="tickets_details" />
+          <zeebe:input source="=order_id" target="correlation_key" />
+          <zeebe:input source="={&#10;  ticket_details: tickets_details&#10;}" target="variables" />
+          <zeebe:input source="=&#34;receive_ticket_bundle&#34;" target="name" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0lolztr</bpmn:incoming>
@@ -491,8 +508,8 @@
     <bpmn:sequenceFlow id="Flow_1t04ep0" name="Yes" sourceRef="Gateway_1tjhlpf" targetRef="book_tickets">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=selected_option != null and billing_is_verified</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0lolztr" sourceRef="book_tickets" targetRef="send_ticket_bundle" />
-    <bpmn:sequenceFlow id="Flow_0z6uur8" sourceRef="send_ticket_bundle" targetRef="broker_completed" />
+    <bpmn:sequenceFlow id="Flow_0lolztr" sourceRef="book_tickets" targetRef="assemble_and_send_ticket_bundle" />
+    <bpmn:sequenceFlow id="Flow_0z6uur8" sourceRef="assemble_and_send_ticket_bundle" targetRef="broker_completed" />
     <bpmn:sequenceFlow id="Flow_0qpg2sy" sourceRef="Gateway_1isulns" targetRef="select_user_trip" />
     <bpmn:sequenceFlow id="Flow_14oahn9" sourceRef="Gateway_1isulns" targetRef="verify_payment_info" />
     <bpmn:sequenceFlow id="Flow_0hir55b" sourceRef="verify_payment_info" targetRef="Gateway_0qrfcfy" />
@@ -589,6 +606,16 @@
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_18udxah" sourceRef="select_user_trip" targetRef="Gateway_07ja635" />
     <bpmn:sequenceFlow id="Flow_020a814" sourceRef="Event_1dkitk2" targetRef="Gateway_07ja635" />
+    <bpmn:intermediateCatchEvent id="Event_1t3sx9l">
+      <bpmn:incoming>Flow_1gbage5</bpmn:incoming>
+      <bpmn:outgoing>Flow_03k1jxz</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0w8ue07" messageRef="Message_1tkfl9l" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1gbage5" sourceRef="Gateway_04x62t8" targetRef="Event_1t3sx9l" />
+    <bpmn:sequenceFlow id="Flow_03k1jxz" sourceRef="Event_1t3sx9l" targetRef="Event_1e93w1a" />
+    <bpmn:endEvent id="Event_1e93w1a">
+      <bpmn:incoming>Flow_03k1jxz</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="Message_3a03da5" name="find_journey">
     <bpmn:extensionElements>
@@ -613,7 +640,7 @@
   </bpmn:message>
   <bpmn:message id="Message_03l2nfh" name="receive_ticket_bundle">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="=interaction_id&#10;" />
+      <zeebe:subscription correlationKey="=order_id" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_0kdc66h" name="receive_order_failed">
@@ -638,6 +665,11 @@
   <bpmn:error id="Error_1i2a0n4" name="verification_failed" errorCode="verification_failed" />
   <bpmn:error id="Error_0zgfcwm" name="selection_option_from_key_error" errorCode="selection_option_from_key_error" />
   <bpmn:error id="Error_1avhy4h" name="booking_failed" errorCode="booking_failed" />
+  <bpmn:message id="Message_1tkfl9l" name="send_retry_message">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=order_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="booking_flow">
       <bpmndi:BPMNShape id="Participant_03utb43_di" bpmnElement="Participant_03utb43" isHorizontal="true">
@@ -720,6 +752,12 @@
           <dc:Bounds x="2138" y="395" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0939gcy_di" bpmnElement="send_retry_message">
+        <dc:Bounds x="912" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="904" y="142" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0khrnne_di" bpmnElement="Flow_0khrnne">
         <di:waypoint x="910" y="290" />
         <di:waypoint x="965" y="290" />
@@ -727,10 +765,9 @@
       <bpmndi:BPMNEdge id="Flow_0z14f5o_di" bpmnElement="Flow_no_wanted_options">
         <di:waypoint x="990" y="265" />
         <di:waypoint x="990" y="190" />
-        <di:waypoint x="350" y="190" />
-        <di:waypoint x="350" y="265" />
+        <di:waypoint x="948" y="190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="644" y="156" width="53" height="27" />
+          <dc:Bounds x="652" y="156" width="53" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1e14jc9_di" bpmnElement="Flow_satisfied">
@@ -786,6 +823,11 @@
         <di:waypoint x="1948" y="370" />
         <di:waypoint x="2152" y="370" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e64cnl_di" bpmnElement="Flow_1e64cnl">
+        <di:waypoint x="912" y="190" />
+        <di:waypoint x="350" y="190" />
+        <di:waypoint x="350" y="265" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_0bnjzeh_di" bpmnElement="Participant_0bnjzeh" isHorizontal="true">
         <dc:Bounds x="160" y="430" width="2080" height="440" />
         <bpmndi:BPMNLabel />
@@ -819,7 +861,7 @@
         <dc:Bounds x="1790" y="570" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wjcqxy_di" bpmnElement="send_ticket_bundle">
+      <bpmndi:BPMNShape id="Activity_1wjcqxy_di" bpmnElement="assemble_and_send_ticket_bundle">
         <dc:Bounds x="1970" y="570" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -872,6 +914,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_07ja635_di" bpmnElement="Gateway_07ja635" isMarkerVisible="true">
         <dc:Bounds x="1505" y="585" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vwzfsk_di" bpmnElement="Event_1t3sx9l">
+        <dc:Bounds x="912" y="522" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e93w1a_di" bpmnElement="Event_1e93w1a">
+        <dc:Bounds x="982" y="522" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0o52i6a_di" bpmnElement="ticket_unavailable_error">
         <dc:Bounds x="1802" y="632" width="36" height="36" />
@@ -986,6 +1034,19 @@
         <di:waypoint x="1380" y="598" />
         <di:waypoint x="1380" y="610" />
         <di:waypoint x="1505" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gbage5_di" bpmnElement="Flow_1gbage5">
+        <di:waypoint x="850" y="585" />
+        <di:waypoint x="850" y="540" />
+        <di:waypoint x="912" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03k1jxz_di" bpmnElement="Flow_03k1jxz">
+        <di:waypoint x="948" y="540" />
+        <di:waypoint x="982" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ci6r3y_di" bpmnElement="Flow_0ci6r3y">
+        <di:waypoint x="930" y="208" />
+        <di:waypoint x="930" y="522" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0xcsi01_di" bpmnElement="Group_0xcsi01">
         <dc:Bounds x="220" y="80" width="820" height="820" />
