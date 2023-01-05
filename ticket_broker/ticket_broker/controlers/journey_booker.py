@@ -4,16 +4,20 @@ from ticket_broker.controlers.bank_verifier import BankController
 
 system_banking_details = {"iban": "NL02TRIO0123456789"}
 
+
 def rng(false_chance) -> bool:
     return random.random() > false_chance
 
 
-_payment_failure_chance = 0.01
 _ticket_unavailable = 0.01
 _nonrefundable_chance = 0.01
 
 
 class TicketProvider:
+    """
+    Stub class for ticket provider adapters.
+    """
+
     def book_ticket(self, ticket_details: dict) -> dict:
         trip_details = {
             "ticket": ticket_details,
@@ -35,6 +39,10 @@ class TicketProvider:
 
 
 class JourneyBooker:
+    """
+    Controller object to book journeys with.
+    """
+
     def __init__(self):
         self.bank_verifier = BankController()
 
@@ -93,5 +101,8 @@ class JourneyBooker:
             provider.cancel_tickets(leg)
 
     def _get_provider_from_key(self, company_id: str) -> TicketProvider:
-        """Retrieves bank verifier strategy based on the provided company ID."""
+        """
+        Retrieves bank verifier strategy based on the provided company ID.
+        """
+
         return TicketProvider()

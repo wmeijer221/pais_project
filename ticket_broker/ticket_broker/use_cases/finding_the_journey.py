@@ -16,6 +16,7 @@ async def send_journey_specification(journey_specification: Dict, order_id: str)
     Sends the message to initialise the broker pool.
     """
 
+    # TODO: This is boilerplate code; is there a way to remove this?
     message = {
         "order_id": order_id,
         "journey_specification": journey_specification

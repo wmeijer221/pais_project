@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ticket_broker.route_database import RouteDatabase
+from ticket_broker.controlers.route_database import RouteDatabase
 
 
 def test_route_database_creatable():
