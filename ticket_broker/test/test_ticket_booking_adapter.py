@@ -1,6 +1,6 @@
 import pytest
 
-from ticket_broker.controlers.journey_booker import JourneyBooker
+from ticket_broker.controlers.ticket_provider_adapter import TicketProviderAdapter
 
 test_journey = {
     'order_id': 1672906979000,
@@ -44,7 +44,7 @@ test_journey = {
 
 
 def test_book_journey():
-    jb = JourneyBooker()
+    jb = TicketProviderAdapter()
     journey = test_journey["selected_option"]
     billing = test_journey['billing_information']
     success, tickets = jb.book_journey(journey, billing)

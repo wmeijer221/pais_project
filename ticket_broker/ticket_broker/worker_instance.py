@@ -1,27 +1,36 @@
-
 import logging
 import os
 
-from pyzeebe import ZeebeWorker, create_insecure_channel, ZeebeClient
+from pyzeebe import ZeebeWorker, ZeebeClient, create_insecure_channel
 
 from ticket_broker.singleton import Singleton
 
-class WorkerInstance(Singleton):
-    """Singleton class for the ZeebeWorker and Client"""
+ENDPOINT_HOST_KEY = "ENDPOINT_HOST"
+ENDPOINT_PORT_KEY = "ENDPOINT_PORT"
 
-    def __new__(self):
-        print("Creating ticket_broker worker")
-        
-        if "ENDPOINT_HOST" in os.environ.keys() and "ENDPOINT_PORT" in os.environ.keys():
+
+class WorkerClientInstance(Singleton):
+    """
+    Singleton class for the ZeebeWorker and ZeebeClient
+    """
+
+    def __new__(cls, *args, **kwargs):
+        print("Creating worker/client instance")
+        env_vars = os.environ.keys()
+        if ENDPOINT_HOST_KEY in env_vars and ENDPOINT_PORT_KEY in env_vars:
             channel = create_insecure_channel(
-                hostname=os.environ["ENDPOINT_HOST"], port=int(os.environ["ENDPOINT_PORT"]))
+                hostname=os.environ[ENDPOINT_HOST_KEY],
+                port=int(os.environ[ENDPOINT_PORT_KEY]))
         else:
             logging.warning("No endpoint specified. Using defaults!")
             channel = create_insecure_channel()
-
-        WorkerInstance._worker = ZeebeWorker(channel)
-        WorkerInstance._client = ZeebeClient(channel)
+        WorkerClientInstance._worker = ZeebeWorker(channel)
+        WorkerClientInstance._client = ZeebeClient(channel)
 
     @classmethod
     def get(cls) -> tuple['ZeebeWorker', 'ZeebeClient']:
-        return WorkerInstance._worker, WorkerInstance._client
+        """
+        Returns the ZeebeWorker and ZeebeClient instances.
+        """
+
+        return WorkerClientInstance._worker, WorkerClientInstance._client

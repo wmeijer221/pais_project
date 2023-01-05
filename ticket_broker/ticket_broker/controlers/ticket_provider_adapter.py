@@ -1,6 +1,12 @@
+"""
+Implements template logic for ticket provider interactions.
+Giving a general idea of the interactions the application
+is expected to have with ticket providers.
+"""
+
 import random
 
-from ticket_broker.controlers.bank_verifier import BankController
+from ticket_broker.controlers.bank_adapter import BankAdapter
 
 system_banking_details = {"iban": "NL02TRIO0123456789"}
 
@@ -38,15 +44,23 @@ class TicketProvider:
         return rng(_nonrefundable_chance)
 
 
-class JourneyBooker:
+class TicketProviderAdapter:
     """
-    Controller object to book journeys with.
+    Generic adapter for interactions with various ticket booking platforms.
     """
 
     def __init__(self):
-        self.bank_verifier = BankController()
+        self.bank_verifier = BankAdapter()
 
-    def book_journey(self, journey: dict[str, str], billing_information: dict) -> tuple[bool, list[dict]]:
+    def book_journey(self, journey: dict[str, str],
+                     billing_information: dict) -> tuple[bool, list[dict]]:
+        """
+        Books entire journey.
+        Returns tuple of success state and the acquired ticket details
+        which is a ``list[dict]``: ``(success, details)``.
+        If success is ``False``, the details are ``None``
+        """
+
         leg_details = self._get_provider_per_lag(journey["value"])
 
         # check availability
@@ -95,6 +109,10 @@ class JourneyBooker:
         return True, tickets
 
     def cancel_journey(self, trip_details: list[dict]):
+        """
+        Cancels a journey.
+        """
+
         for leg in trip_details:
             provider_id = trip_details["ticket"]["ticket"]
             provider = self._get_provider_from_key(provider_id)

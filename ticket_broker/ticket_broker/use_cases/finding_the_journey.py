@@ -1,17 +1,18 @@
 from typing import Dict
 from pathlib import Path
 
-from ticket_broker.use_cases.base import logging_task_decorator
+from ticket_broker.use_cases.base import on_error
 from ticket_broker.controlers.route_database import RouteDatabase
-from ticket_broker.worker_instance import WorkerInstance
+from ticket_broker.worker_instance import WorkerClientInstance
 
 
-worker, client = WorkerInstance.get()
+worker, client = WorkerClientInstance.get()
 
 rdb = RouteDatabase.from_file(Path("data/railways.yaml"))
 
 
-@worker.task(task_type="find_route_options", before=[logging_task_decorator])
+@worker.task(task_type="find_route_options",
+             exception_handler=on_error)
 async def find_route_options(journey_specification: Dict, order_id: str):
     """
     Finds route options and sends it to the customer.

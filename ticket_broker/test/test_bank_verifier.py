@@ -1,14 +1,14 @@
 import pytest
 
-from ticket_broker.controlers.bank_verifier import BankController
+from ticket_broker.controlers.bank_adapter import BankAdapter
 
 
 def test_bank_verifier():
-    verifier = BankController()
+    verifier = BankAdapter()
     details = {
         "iban": "NL02TRIO0123456789"
     }
-    success = verifier.verify(details)
+    success = verifier.verify_bank_details(details)
     assert success
 
     fake_bank = "FAKE"
@@ -16,4 +16,4 @@ def test_bank_verifier():
         "iban": f"NL02{fake_bank}0123456789"
     }
     with pytest.raises(KeyError, match=f".*{fake_bank}.*"):
-        verifier.verify(details)
+        verifier.verify_bank_details(details)

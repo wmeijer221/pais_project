@@ -2,7 +2,7 @@ import logging
 from typing import Collection, Dict
 from pyzeebe import Job
 
-from ticket_broker.worker_instance import WorkerInstance
+from ticket_broker.worker_instance import WorkerClientInstance
 
 
 async def logging_task_decorator(job: Job) -> Job:
@@ -24,10 +24,10 @@ async def on_error(exception: Exception, job: Job):
     await job.set_error_status(status)
 
 
-worker, client = WorkerInstance.get()
+worker, client = WorkerClientInstance.get()
 
 
-@worker.task(task_type="select_option_from_key", exception_handler=on_error)
+@worker.task(task_type="select_option_from_key")
 async def select_option_from_key(job: Job, key: object, options: list[Collection]):
     """
     Forwards the details of the chosen option from the list of options.

@@ -1,7 +1,8 @@
-
 class Singleton(object):
-    """Implements singleton pattern."""
-    
+    """
+    Generic implementation of the Singleton pattern.
+    """
+
     _instance = None
 
     def __new__(cls, *args, **kwargs):
