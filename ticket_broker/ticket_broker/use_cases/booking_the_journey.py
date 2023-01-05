@@ -2,7 +2,7 @@ from typing import Dict
 
 from pyzeebe import Job
 
-from ticket_broker.use_cases.base import on_error
+from ticket_broker.use_cases.basic_use_cases import on_error
 from ticket_broker.controlers.bank_adapter import BankAdapter
 from ticket_broker.controlers.ticket_provider_adapter import TicketProviderAdapter
 from ticket_broker.worker_instance import WorkerClientInstance
