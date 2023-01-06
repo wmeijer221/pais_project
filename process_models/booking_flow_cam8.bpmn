@@ -329,14 +329,6 @@
       <bpmn:incoming>Flow_1376j8f</bpmn:incoming>
       <bpmn:outgoing>Flow_0khrnne</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:startEvent id="booking_start" name="Booking Start">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=(now() - date and time(&#34;1970-01-01T00:00Z&#34;)) / duration(&#34;PT1S&#34;) * 1000" target="order_id" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_start_booking</bpmn:outgoing>
-    </bpmn:startEvent>
     <bpmn:userTask id="place_order" name="Place order for option">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
@@ -426,6 +418,15 @@
       <bpmn:messageEventDefinition id="MessageEventDefinition_0wwosgk" messageRef="Message_3vndlro" />
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1bufhhh" sourceRef="rebooking_start" targetRef="Gateway_1f5ukgs" />
+    <bpmn:startEvent id="booking_start" name="Start new booking">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=(now() - date and time(&#34;1970-01-01T00:00Z&#34;)) / duration(&#34;PT1S&#34;) * 1000" target="order_id" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_start_booking</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0x167kc" messageRef="Message_1j70mik" />
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmn:process id="Process_1oyf38q" name="Ticket Broker Booking Flow" isExecutable="true">
     <bpmn:startEvent id="receive_journey_specification" name="Receive journey specification">
@@ -687,6 +688,7 @@
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_3vndlro" name="rebooking_start" />
+  <bpmn:message id="Message_1j70mik" name="start_new_booking" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="booking_flow">
       <bpmndi:BPMNShape id="Participant_03utb43_di" bpmnElement="Participant_03utb43" isHorizontal="true">
@@ -721,12 +723,6 @@
       <bpmndi:BPMNShape id="Activity_1g6z4p3_di" bpmnElement="Activity_0koua8h">
         <dc:Bounds x="810" y="250" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0y9km7f_di" bpmnElement="booking_start">
-        <dc:Bounds x="252" y="272" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="238" y="248" width="67" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1bftc84_di" bpmnElement="place_order">
         <dc:Bounds x="1070" y="250" width="100" height="80" />
@@ -782,6 +778,12 @@
         <dc:Bounds x="252" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="232" y="385" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1p7fmtn_di" bpmnElement="booking_start">
+        <dc:Bounds x="252" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="227" y="248" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0khrnne_di" bpmnElement="Flow_0khrnne">
