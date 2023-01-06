@@ -1,0 +1,27 @@
+{
+  "components": [
+    {
+      "text": "# Canceling part of a journey.\n\nTo start, please fill in your order ID.",
+      "type": "text",
+      "id": "Field_1r6iz3f"
+    },
+    {
+      "label": "Order ID",
+      "type": "textfield",
+      "id": "Field_0ob1uhq",
+      "key": "order_id",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_11m69z6",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}

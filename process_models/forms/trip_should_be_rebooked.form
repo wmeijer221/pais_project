@@ -1,0 +1,24 @@
+{
+  "components": [
+    {
+      "text": "# Rebooking\n\nYou succesfully canceled part of your trip!\n\nDo you want to rebook part of your trip now? (You can always do this later as well.)",
+      "type": "text",
+      "id": "Field_0piz53u"
+    },
+    {
+      "label": "Yes, I want to rebook part of the trip!",
+      "type": "checkbox",
+      "id": "Field_1725l0i",
+      "key": "trip_should_be_rebooked"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1y6mu3e",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}
