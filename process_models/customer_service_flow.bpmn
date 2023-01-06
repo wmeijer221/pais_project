@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0kxqyd1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:collaboration id="Collaboration_08e22p3">
+    <bpmn:participant id="Participant_1tfzrvf" name="Customer" processRef="Process_099ow49" />
+    <bpmn:participant id="Participant_1hshzp0" name="Ticket Broker" processRef="Process_0ko38ql" />
+    <bpmn:messageFlow id="Flow_18su38z" sourceRef="send_cancelation_request" targetRef="receive_cancelation" />
+    <bpmn:messageFlow id="Flow_1w3fxm3" sourceRef="send_cancelation_success" targetRef="receive_cancelation_success" />
+    <bpmn:messageFlow id="Flow_0ase3gk" sourceRef="Event_0n858gw" targetRef="Event_04r0pzy" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_099ow49" name="Customer Service Flow" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1nvmwmb" />
+    <bpmn:intermediateThrowEvent id="send_cancelation_request" name="Send cancelation request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message_forward_data" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;cancel_tickets&#34;" target="name" />
+          <zeebe:input source="={&#10;  canceled_tickets: canceled_tickets,&#10;  order_id: order_id&#10;}" target="variables" />
+          <zeebe:input source="=cancelation_id" target="correlation_key" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1n6gtix</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gpfa7u</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1egxjpa" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateCatchEvent id="receive_cancelation_success" name="Receive cancelation success">
+      <bpmn:incoming>Flow_1ichibm</bpmn:incoming>
+      <bpmn:outgoing>Flow_02ilav9</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0m9vqbc" messageRef="Message_1boopfr" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:eventBasedGateway id="Gateway_19oocpw" name="Await cancelation success">
+      <bpmn:incoming>Flow_1gpfa7u</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ichibm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1bm7e0e</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:userTask id="select_canceled_tickets" name="Select tickets for cancelation">
+      <bpmn:extensionElements>
+        <zeebe:assignmentDefinition assignee="demo" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=order_id" target="order_id" />
+          <zeebe:output source="=canceled_tickets" target="canceled_tickets" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05f6rfx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n6gtix</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0qj2hml" name="Should trip be rebooked?">
+      <bpmn:extensionElements>
+        <zeebe:assignmentDefinition assignee="demo" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=trip_should_be_rebooked" target="trip_should_be_rebooked" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02ilav9</bpmn:incoming>
+      <bpmn:outgoing>Flow_12drpcw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_18ipgeq">
+      <bpmn:incoming>Flow_12drpcw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t7dpty</bpmn:outgoing>
+      <bpmn:outgoing>Flow_07gf29b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0ks2w2e">
+      <bpmn:incoming>Flow_07gf29b</bpmn:incoming>
+      <bpmn:incoming>Flow_0ka62kx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kakta1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateThrowEvent id="send_rebook_request" name="Send rebook request">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message_forward_data" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;rebooking_start&#34;" target="name" />
+          <zeebe:input source="={&#10;  order_id: order_id&#10;}" target="variables" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0t7dpty</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ka62kx</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0kizto0" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_02w7xji" name="Cancelation success">
+      <bpmn:incoming>Flow_0kakta1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=(now() - date and time(&#34;1970-01-01T00:00Z&#34;)) / duration(&#34;PT1S&#34;) * 1000" target="cancelation_id" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_05f6rfx</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1n6gtix" sourceRef="select_canceled_tickets" targetRef="send_cancelation_request" />
+    <bpmn:sequenceFlow id="Flow_1gpfa7u" sourceRef="send_cancelation_request" targetRef="Gateway_19oocpw" />
+    <bpmn:sequenceFlow id="Flow_1ichibm" sourceRef="Gateway_19oocpw" targetRef="receive_cancelation_success" />
+    <bpmn:sequenceFlow id="Flow_02ilav9" sourceRef="receive_cancelation_success" targetRef="Activity_0qj2hml" />
+    <bpmn:sequenceFlow id="Flow_1bm7e0e" sourceRef="Gateway_19oocpw" targetRef="Event_04r0pzy" />
+    <bpmn:sequenceFlow id="Flow_05f6rfx" sourceRef="StartEvent_1" targetRef="select_canceled_tickets" />
+    <bpmn:sequenceFlow id="Flow_12drpcw" sourceRef="Activity_0qj2hml" targetRef="Gateway_18ipgeq" />
+    <bpmn:sequenceFlow id="Flow_0t7dpty" name="Yes" sourceRef="Gateway_18ipgeq" targetRef="send_rebook_request">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=trip_should_be_rebooked = True</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_07gf29b" name="No" sourceRef="Gateway_18ipgeq" targetRef="Gateway_0ks2w2e">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=trip_should_be_rebooked = False</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ka62kx" sourceRef="send_rebook_request" targetRef="Gateway_0ks2w2e" />
+    <bpmn:sequenceFlow id="Flow_0kakta1" sourceRef="Gateway_0ks2w2e" targetRef="Event_02w7xji" />
+    <bpmn:intermediateCatchEvent id="Event_04r0pzy" name="Receive cancelation failed">
+      <bpmn:incoming>Flow_1bm7e0e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ug0i7h</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0u1l2al" messageRef="Message_2hfdspn" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Event_0n6o4n1" name="Cancelation failed">
+      <bpmn:incoming>Flow_0ug0i7h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ug0i7h" sourceRef="Event_04r0pzy" targetRef="Event_0n6o4n1" />
+  </bpmn:process>
+  <bpmn:process id="Process_0ko38ql" name="Ticket Broker Service Flow" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1iu7b49" name="No" sourceRef="Gateway_09a2bbe" targetRef="Event_0n858gw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=tickets_are_valid = False</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:startEvent id="receive_cancelation" name="Receive Cancelation Request">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=canceled_tickets" target="canceled_tickets" />
+          <zeebe:output source="=order_id" target="order_id" />
+          <zeebe:output source="=cancelation_id" target="cancelation_id" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1aoh40g</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_198fqi3" messageRef="Message_1ht013c" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="verify_tickets" name="Verify tickets">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="verify_tickets" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=order_id" target="order_id" />
+          <zeebe:input source="=canceled_tickets" target="canceled_tickets" />
+          <zeebe:output source="=tickets_are_valid" target="tickets_are_valid" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1aoh40g</bpmn:incoming>
+      <bpmn:outgoing>Flow_07wgn4k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_09a2bbe" name="Valid tickets?">
+      <bpmn:incoming>Flow_07wgn4k</bpmn:incoming>
+      <bpmn:outgoing>Flow_098ayfl</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1iu7b49</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1aoh40g" sourceRef="receive_cancelation" targetRef="verify_tickets" />
+    <bpmn:sequenceFlow id="Flow_07wgn4k" sourceRef="verify_tickets" targetRef="Gateway_09a2bbe" />
+    <bpmn:sequenceFlow id="Flow_098ayfl" name="Yes" sourceRef="Gateway_09a2bbe" targetRef="Activity_15abdk7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=tickets_are_valid = True</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_15abdk7" name="Cancel tickets">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="cancel_tickets" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=order_id" target="order_id" />
+          <zeebe:input source="=canceled_tickets" target="canceled_tickets" />
+          <zeebe:output source="=successfully_canceled_tickets" target="successfully_canceled_tickets" />
+          <zeebe:output source="=unsuccessfully_canceled_tickets" target="unsuccessfully_canceled_tickets" />
+          <zeebe:output source="=canceled_tickets_price" target="canceled_tickets_price" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_098ayfl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m8q8yh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_16k9ie3" name="Refund money">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="refund_money" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=canceled_tickets_price" target="canceled_tickets_price" />
+          <zeebe:input source="=order_id" target="order_id" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m8q8yh</bpmn:incoming>
+      <bpmn:outgoing>Flow_12qnb34</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateThrowEvent id="send_cancelation_success" name="Send cancelation success">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message_forward_data" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;receive_cancelation_success&#34;" target="name" />
+          <zeebe:input source="={&#10;  successfully_canceled_tickets: successfully_canceled_tickets,&#10;  unsuccessfully_canceled_tickets: unsuccessfully_canceled_tickets,&#10;  canceled_tickets_price: canceled_tickets_price&#10;}" target="variables" />
+          <zeebe:input source="=cancelation_id" target="correlation_key" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12qnb34</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lobked</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_04sfbio" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_1gc8oof" name="Cancelation success">
+      <bpmn:incoming>Flow_0lobked</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1m8q8yh" sourceRef="Activity_15abdk7" targetRef="Activity_16k9ie3" />
+    <bpmn:sequenceFlow id="Flow_12qnb34" sourceRef="Activity_16k9ie3" targetRef="send_cancelation_success" />
+    <bpmn:sequenceFlow id="Flow_0lobked" sourceRef="send_cancelation_success" targetRef="Event_1gc8oof" />
+    <bpmn:intermediateThrowEvent id="Event_0n858gw" name="Send cancelation failed">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;receive_cancelation_failed&#34;" target="name" />
+          <zeebe:input source="=cancelation_id" target="correlation_key" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1iu7b49</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fk2x9n</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0ysh97v" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_1dpuc1n">
+      <bpmn:incoming>Flow_1fk2x9n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1fk2x9n" sourceRef="Event_0n858gw" targetRef="Event_1dpuc1n" />
+  </bpmn:process>
+  <bpmn:message id="Message_1ht013c" name="cancel_tickets" />
+  <bpmn:message id="Message_1boopfr" name="receive_cancelation_success">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=cancelation_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_2hfdspn" name="receive_cancelation_failed">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=cancelation_id" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_08e22p3">
+      <bpmndi:BPMNShape id="Participant_1tfzrvf_di" bpmnElement="Participant_1tfzrvf" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1430" height="245" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_032jaa8_di" bpmnElement="send_cancelation_request">
+        <dc:Bounds x="442" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="418" y="132" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1j7pe45_di" bpmnElement="receive_cancelation_success">
+        <dc:Bounds x="992" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="985" y="120" width="56" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1wpwvh1_di" bpmnElement="Gateway_19oocpw">
+        <dc:Bounds x="555" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="537" y="117.5" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15hxngz_di" bpmnElement="select_canceled_tickets">
+        <dc:Bounds x="310" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0x6us2c_di" bpmnElement="Activity_0qj2hml">
+        <dc:Bounds x="1080" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18ipgeq_di" bpmnElement="Gateway_18ipgeq" isMarkerVisible="true">
+        <dc:Bounds x="1235" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ks2w2e_di" bpmnElement="Gateway_0ks2w2e" isMarkerVisible="true">
+        <dc:Bounds x="1425" y="155" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1uwwid7_di" bpmnElement="send_rebook_request">
+        <dc:Bounds x="1332" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1319" y="205" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02w7xji_di" bpmnElement="Event_02w7xji">
+        <dc:Bounds x="1522" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1512" y="205" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04r0pzy_di" bpmnElement="Event_04r0pzy">
+        <dc:Bounds x="802" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="780" y="212" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0n6o4n1_di" bpmnElement="Event_0n6o4n1">
+        <dc:Bounds x="892" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="866" y="285" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1n6gtix_di" bpmnElement="Flow_1n6gtix">
+        <di:waypoint x="410" y="180" />
+        <di:waypoint x="442" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gpfa7u_di" bpmnElement="Flow_1gpfa7u">
+        <di:waypoint x="478" y="180" />
+        <di:waypoint x="555" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ichibm_di" bpmnElement="Flow_1ichibm">
+        <di:waypoint x="605" y="180" />
+        <di:waypoint x="992" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02ilav9_di" bpmnElement="Flow_02ilav9">
+        <di:waypoint x="1028" y="180" />
+        <di:waypoint x="1080" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bm7e0e_di" bpmnElement="Flow_1bm7e0e">
+        <di:waypoint x="580" y="205" />
+        <di:waypoint x="580" y="260" />
+        <di:waypoint x="802" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05f6rfx_di" bpmnElement="Flow_05f6rfx">
+        <di:waypoint x="248" y="180" />
+        <di:waypoint x="310" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12drpcw_di" bpmnElement="Flow_12drpcw">
+        <di:waypoint x="1180" y="180" />
+        <di:waypoint x="1235" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t7dpty_di" bpmnElement="Flow_0t7dpty">
+        <di:waypoint x="1285" y="180" />
+        <di:waypoint x="1332" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1300" y="162" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07gf29b_di" bpmnElement="Flow_07gf29b">
+        <di:waypoint x="1260" y="155" />
+        <di:waypoint x="1260" y="120" />
+        <di:waypoint x="1450" y="120" />
+        <di:waypoint x="1450" y="155" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1348" y="102" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ka62kx_di" bpmnElement="Flow_0ka62kx">
+        <di:waypoint x="1368" y="180" />
+        <di:waypoint x="1425" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kakta1_di" bpmnElement="Flow_0kakta1">
+        <di:waypoint x="1475" y="180" />
+        <di:waypoint x="1522" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ug0i7h_di" bpmnElement="Flow_0ug0i7h">
+        <di:waypoint x="838" y="260" />
+        <di:waypoint x="892" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1hshzp0_di" bpmnElement="Participant_1hshzp0" isHorizontal="true">
+        <dc:Bounds x="160" y="320" width="1430" height="260" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08yk2nw_di" bpmnElement="receive_cancelation">
+        <dc:Bounds x="442" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431" y="445" width="59" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1a0kh0q_di" bpmnElement="verify_tickets">
+        <dc:Bounds x="540" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09a2bbe_di" bpmnElement="Gateway_09a2bbe" isMarkerVisible="true">
+        <dc:Bounds x="705" y="395" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="698" y="371" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wmaw3c_di" bpmnElement="Activity_15abdk7">
+        <dc:Bounds x="870" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ct5ux3_di" bpmnElement="Activity_16k9ie3">
+        <dc:Bounds x="1030" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0a7kizo_di" bpmnElement="send_cancelation_success">
+        <dc:Bounds x="1212" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1190" y="445" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gc8oof_di" bpmnElement="Event_1gc8oof">
+        <dc:Bounds x="1322" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1311" y="445" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0re61jb_di" bpmnElement="Event_0n858gw">
+        <dc:Bounds x="802" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="779" y="535" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dpuc1n_di" bpmnElement="Event_1dpuc1n">
+        <dc:Bounds x="902" y="492" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1iu7b49_di" bpmnElement="Flow_1iu7b49">
+        <di:waypoint x="730" y="445" />
+        <di:waypoint x="730" y="510" />
+        <di:waypoint x="802" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="742" y="444" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aoh40g_di" bpmnElement="Flow_1aoh40g">
+        <di:waypoint x="478" y="420" />
+        <di:waypoint x="540" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07wgn4k_di" bpmnElement="Flow_07wgn4k">
+        <di:waypoint x="640" y="420" />
+        <di:waypoint x="705" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_098ayfl_di" bpmnElement="Flow_098ayfl">
+        <di:waypoint x="755" y="420" />
+        <di:waypoint x="870" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="760" y="402" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m8q8yh_di" bpmnElement="Flow_1m8q8yh">
+        <di:waypoint x="970" y="420" />
+        <di:waypoint x="1030" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12qnb34_di" bpmnElement="Flow_12qnb34">
+        <di:waypoint x="1130" y="420" />
+        <di:waypoint x="1212" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lobked_di" bpmnElement="Flow_0lobked">
+        <di:waypoint x="1248" y="420" />
+        <di:waypoint x="1322" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fk2x9n_di" bpmnElement="Flow_1fk2x9n">
+        <di:waypoint x="838" y="510" />
+        <di:waypoint x="902" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18su38z_di" bpmnElement="Flow_18su38z">
+        <di:waypoint x="460" y="198" />
+        <di:waypoint x="460" y="402" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w3fxm3_di" bpmnElement="Flow_1w3fxm3">
+        <di:waypoint x="1230" y="402" />
+        <di:waypoint x="1230" y="260" />
+        <di:waypoint x="1010" y="260" />
+        <di:waypoint x="1010" y="198" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ase3gk_di" bpmnElement="Flow_0ase3gk">
+        <di:waypoint x="820" y="492" />
+        <di:waypoint x="820" y="278" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
