@@ -2,7 +2,6 @@ import copy
 from typing import List, Dict
 from pathlib import Path
 
-import logging
 import networkx as nx
 import yaml
 
@@ -65,8 +64,6 @@ class RouteDatabase:
         based on the weight condition. Will select the smallest weight.
         """
         edges = self.graph.get_edge_data(leg_start, leg_end)
-
-        logging.debug(f"LEG DATA FROM {leg_start} to {leg_end}:\n EDGES: {edges}")
 
         if len(edges) == 1:
             best_option = 0

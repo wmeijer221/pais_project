@@ -1,0 +1,27 @@
+{
+  "components": [
+    {
+      "label": "Order ID",
+      "type": "textfield",
+      "id": "Field_18r4xxg",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "label": "Ticket Details",
+      "type": "textfield",
+      "id": "Field_0r3gegh",
+      "key": "ticket_details",
+      "disabled": true
+    }
+  ],
+  "type": "default",
+  "id": "Form_1s9zwik",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}

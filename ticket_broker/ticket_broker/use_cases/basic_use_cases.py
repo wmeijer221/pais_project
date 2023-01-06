@@ -27,7 +27,8 @@ async def on_error(exception: Exception, job: Job):
 worker, client = WorkerClientInstance.get()
 
 
-@worker.task(task_type="select_option_from_key")
+@worker.task(task_type="select_option_from_key",
+             before=[logging_task_decorator])
 async def select_option_from_key(job: Job, key: object, options: list[Collection]):
     """
     Forwards the details of the chosen option from the list of options.
