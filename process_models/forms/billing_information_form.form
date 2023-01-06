@@ -1,0 +1,85 @@
+{
+  "components": [
+    {
+      "text": "## Trip Details",
+      "type": "text",
+      "id": "Field_13npqwj"
+    },
+    {
+      "label": "Trip ID",
+      "type": "textfield",
+      "id": "Field_01p5g1d",
+      "key": "option_selected_id",
+      "disabled": true,
+      "properties": {}
+    },
+    {
+      "text": "## Billing Information",
+      "type": "text",
+      "id": "Field_1yj4j3k"
+    },
+    {
+      "label": "Full Name",
+      "type": "textfield",
+      "id": "Field_0qoqzmw",
+      "key": "full_name",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "John Doe"
+    },
+    {
+      "label": "Phone Number",
+      "type": "textfield",
+      "id": "Field_1yyktcj",
+      "key": "phone_number",
+      "validate": {
+        "required": true,
+        "pattern": "^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$"
+      },
+      "defaultValue": "+31612345678"
+    },
+    {
+      "label": "Email",
+      "type": "textfield",
+      "id": "Field_1aaq3y0",
+      "key": "email",
+      "validate": {
+        "pattern": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+        "required": true
+      },
+      "defaultValue": "john_doe@gmail.com"
+    },
+    {
+      "label": "National ID",
+      "type": "textfield",
+      "id": "Field_006jl31",
+      "key": "national_id",
+      "validate": {
+        "required": true,
+        "pattern": "(^([0-9]{9})(X|V)$|^([0-9]{11})$)"
+      },
+      "defaultValue": "999999990X"
+    },
+    {
+      "label": "IBAN",
+      "type": "textfield",
+      "id": "Field_0eaiv7q",
+      "key": "iban",
+      "validate": {
+        "pattern": "^(?:(?:IT|SM)\\d{2}[A-Z]\\d{22}|CY\\d{2}[A-Z]\\d{23}|NL\\d{2}[A-Z]{4}\\d{10}|LV\\d{2}[A-Z]{4}\\d{13}|(?:BG|BH|GB|IE)\\d{2}[A-Z]{4}\\d{14}|GI\\d{2}[A-Z]{4}\\d{15}|RO\\d{2}[A-Z]{4}\\d{16}|KW\\d{2}[A-Z]{4}\\d{22}|MT\\d{2}[A-Z]{4}\\d{23}|NO\\d{13}|(?:DK|FI|GL|FO)\\d{16}|MK\\d{17}|(?:AT|EE|KZ|LU|XK)\\d{18}|(?:BA|HR|LI|CH|CR)\\d{19}|(?:GE|DE|LT|ME|RS)\\d{20}|IL\\d{21}|(?:AD|CZ|ES|MD|SA)\\d{22}|PT\\d{23}|(?:BE|IS)\\d{24}|(?:FR|MR|MC)\\d{25}|(?:AL|DO|LB|PL)\\d{26}|(?:AZ|HU)\\d{27}|(?:GR|MU)\\d{28})$",
+        "required": true
+      },
+      "defaultValue": "NL02TRIO0123456789"
+    }
+  ],
+  "type": "default",
+  "id": "billing_information_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}
