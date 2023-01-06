@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0oocakc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.5.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:process id="Process_0x7v794" name="Task creation" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_03tvell">{
+  "components": [
+    {
+      "text": "# Ticket to Europe\n\nWelcome!\n\nWhat do you want to do?",
+      "type": "text",
+      "id": "Field_0te7pi8"
+    },
+    {
+      "values": [
+        {
+          "label": "Book new journey!",
+          "value": "start_new_booking"
+        },
+        {
+          "label": "Cancel part of my trip!",
+          "value": "start_new_cancelation"
+        },
+        {
+          "label": "Nothing...",
+          "value": "stop_menu"
+        }
+      ],
+      "label": "What do you want to do?",
+      "type": "radio",
+      "id": "Field_08fvt6m",
+      "key": "task_to_perform",
+      "defaultValue": "book_new_journey",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0nck38n",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_18d2lrt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_18d2lrt" sourceRef="StartEvent_1" targetRef="Gateway_1o28xka" />
+    <bpmn:userTask id="Activity_0kw928r" name="Select task">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_03tvell" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=task_to_perform" target="task_to_perform" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition assignee="demo" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0i4kauh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ckelix</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1x9rwxr" name="What task was selected?" default="Flow_1sv97aa">
+      <bpmn:incoming>Flow_0ckelix</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sv97aa</bpmn:outgoing>
+      <bpmn:outgoing>Flow_089pe5p</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ckelix" sourceRef="Activity_0kw928r" targetRef="Gateway_1x9rwxr" />
+    <bpmn:sequenceFlow id="Flow_1sv97aa" sourceRef="Gateway_1x9rwxr" targetRef="Event_1g3h1s6" />
+    <bpmn:intermediateThrowEvent id="Event_1g3h1s6" name="Start new process instance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send_message" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=task_to_perform" target="name" />
+          <zeebe:input source="=&#34;default&#34;" target="correlation_key" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1sv97aa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0taqn8u</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01yud04" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0taqn8u" sourceRef="Event_1g3h1s6" targetRef="Gateway_1o28xka" />
+    <bpmn:exclusiveGateway id="Gateway_1o28xka">
+      <bpmn:incoming>Flow_18d2lrt</bpmn:incoming>
+      <bpmn:incoming>Flow_0taqn8u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i4kauh</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0i4kauh" sourceRef="Gateway_1o28xka" targetRef="Activity_0kw928r" />
+    <bpmn:endEvent id="Event_0eik2r7" name="Stop task creation">
+      <bpmn:incoming>Flow_089pe5p</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_089pe5p" sourceRef="Gateway_1x9rwxr" targetRef="Event_0eik2r7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=task_to_perform = "stop_menu"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0x7v794">
+      <bpmndi:BPMNShape id="Gateway_1o28xka_di" bpmnElement="Gateway_1o28xka" isMarkerVisible="true">
+        <dc:Bounds x="235" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yow7j1_di" bpmnElement="Activity_0kw928r">
+        <dc:Bounds x="330" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1x9rwxr_di" bpmnElement="Gateway_1x9rwxr" isMarkerVisible="true">
+        <dc:Bounds x="485" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="475" y="62" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ie7dyw_di" bpmnElement="Event_1g3h1s6">
+        <dc:Bounds x="592" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="566" y="142" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0eik2r7_di" bpmnElement="Event_0eik2r7">
+        <dc:Bounds x="592" y="192" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="566" y="235" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18d2lrt_di" bpmnElement="Flow_18d2lrt">
+        <di:waypoint x="198" y="117" />
+        <di:waypoint x="235" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i4kauh_di" bpmnElement="Flow_0i4kauh">
+        <di:waypoint x="285" y="117" />
+        <di:waypoint x="330" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ckelix_di" bpmnElement="Flow_0ckelix">
+        <di:waypoint x="430" y="117" />
+        <di:waypoint x="485" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sv97aa_di" bpmnElement="Flow_1sv97aa">
+        <di:waypoint x="535" y="117" />
+        <di:waypoint x="592" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0taqn8u_di" bpmnElement="Flow_0taqn8u">
+        <di:waypoint x="628" y="117" />
+        <di:waypoint x="660" y="117" />
+        <di:waypoint x="660" y="40" />
+        <di:waypoint x="260" y="40" />
+        <di:waypoint x="260" y="92" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_089pe5p_di" bpmnElement="Flow_089pe5p">
+        <di:waypoint x="510" y="142" />
+        <di:waypoint x="510" y="210" />
+        <di:waypoint x="592" y="210" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

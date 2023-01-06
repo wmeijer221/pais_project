@@ -1,0 +1,42 @@
+{
+  "components": [
+    {
+      "text": "# Ticket to Europe\n\nWelcome!\n\nWhat do you want to do?",
+      "type": "text",
+      "id": "Field_0te7pi8"
+    },
+    {
+      "values": [
+        {
+          "label": "Book new journey!",
+          "value": "start_new_booking"
+        },
+        {
+          "label": "Cancel part of my trip!",
+          "value": "start_new_cancelation"
+        },
+        {
+          "label": "Nothing...",
+          "value": "stop_menu"
+        }
+      ],
+      "label": "What do you want to do?",
+      "type": "radio",
+      "id": "Field_08fvt6m",
+      "key": "task_to_perform",
+      "defaultValue": "book_new_journey",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0nck38n",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}

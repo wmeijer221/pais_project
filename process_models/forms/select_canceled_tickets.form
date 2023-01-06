@@ -1,0 +1,27 @@
+{
+  "components": [
+    {
+      "label": "Order ID",
+      "type": "textfield",
+      "id": "Field_1xd3kw3",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "label": "Select tickets to cancel",
+      "type": "checklist",
+      "id": "Field_1etb4vi",
+      "key": "tickets_to_cancel",
+      "valuesKey": "journey_details"
+    }
+  ],
+  "type": "default",
+  "id": "select_canceled_tickets",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}
