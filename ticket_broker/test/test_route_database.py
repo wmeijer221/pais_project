@@ -7,6 +7,19 @@ def test_route_database_creatable():
     assert RouteDatabase([], {}, {}) is not None
     assert RouteDatabase.from_file(Path("data/test.yaml")) is not None
 
+def test_get_all_stations():
+    rdb = RouteDatabase.from_file(Path("data/test.yaml"))
+    station_count = 3
+    stations = rdb.get_all_stations()
+    assert len(stations) == station_count
+    assert all([isinstance(station, tuple) for station in stations])
+    station_keys = ["a", "b", "c"]
+    pretty_names = ["Test station A", "Test station B", "Test station C"]
+    for entry, exp_key, exp_name in zip(stations, station_keys, pretty_names):
+        assert isinstance(exp_name[0], str)
+        assert isinstance(exp_name[1], str)
+        assert exp_key == entry[0]
+        assert exp_name == entry[1]
 
 def test_load_data():
     """

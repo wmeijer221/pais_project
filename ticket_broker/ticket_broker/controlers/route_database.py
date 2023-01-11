@@ -5,7 +5,6 @@ from pathlib import Path
 import networkx as nx
 import yaml
 
-
 class RouteDatabase:
     """
     Object that holds and constructs a network graph of all known routes.
@@ -20,6 +19,11 @@ class RouteDatabase:
         self._stations = stations
         self.companies = companies
         self._init_network_graph()
+
+    def get_all_stations(self) -> list[tuple[str, str]]:
+        stations = self.graph.nodes(data=True)
+        data = [(key, station["pretty_name"]) for key, station in stations]
+        return list(data)
 
     def find_route_options(self, start_station, end_station, weight):
         """

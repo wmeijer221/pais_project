@@ -1,3 +1,5 @@
+# TODO: Change implementations to use global instead.
+
 class Singleton(object):
     """
     Generic implementation of the Singleton pattern.
