@@ -139,9 +139,18 @@ services:
       - zeebe
     depends_on:
       - zeebe
+      - content_api
     environment:
       - "ENDPOINT_HOST=zeebe"
       - "ENDPOINT_PORT=26500"
+    networks:
+      - camunda-platform
+
+  content_api:
+    build: content_api
+    container_name: content_api
+    ports: 
+      - "8083:8000"
     networks:
       - camunda-platform
 

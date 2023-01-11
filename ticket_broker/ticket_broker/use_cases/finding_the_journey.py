@@ -1,5 +1,8 @@
 from typing import Dict
 from pathlib import Path
+import requests
+import logging
+from uuid import uuid4
 
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
 from ticket_broker.controlers.route_database import RouteDatabase
@@ -40,7 +43,22 @@ async def find_route_options(journey_specification: Dict, order_id: str):
                                      journey_specification['end_station'],
                                      weight)
 
-    message = {"route_options": options}
+    options = {str(uuid4()): option for option in options}
+    selection_options = list([{"label": f'Option {index + 1}', "value": id} for index, id in enumerate(options.keys())])
+    message = {
+        "route_options": options,
+        "route_selection_options": selection_options
+    }
     await client.publish_message("receive_journey_options", str(order_id), message)
 
+    send_routes_to_content_server(options, order_id)
+
     return message
+
+def send_routes_to_content_server(route_options: dict, order_id: str):
+    json_message = {
+        "order_id": order_id,
+        "route_options": route_options,
+    }
+    url = "http://content_api:8000/set_latest_ticket_options"
+    requests.post(url, json=json_message, verify=False)
