@@ -1,7 +1,6 @@
 from typing import Dict
 from pathlib import Path
 import requests
-import logging
 from uuid import uuid4
 
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
