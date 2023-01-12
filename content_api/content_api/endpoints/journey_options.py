@@ -1,23 +1,10 @@
-"""
-This script implements a very basic means of rendering tickets.
-It's a hack to allow displaying non-static data in a reasonable 
-fashiong using the Camunda 8 GUI.
-"""
-
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, FileResponse
-import logging
+from fastapi.responses import FileResponse
 import imgkit
+import logging
 import math
 
-logging.basicConfig(level=logging.INFO)
+from content_api.main import load_template, app
 
-app = FastAPI()
-
-def load_template(name: str) -> str: 
-    with open(f"./html/{name}", 'r', encoding="utf-8") as template_file:
-        template = template_file.read()
-    return template
 
 latest_option_id = "-1"
 ticket_options = {}
@@ -64,7 +51,7 @@ def generate_html(options: dict) -> str:
             leg_time = leg["traveltime_seconds"]
             params = {
                 "leg_index": leg_id,
-                "leg_end_station_name": leg["start_station"],
+                "leg_start_station_name": leg["start_station"],
                 "leg_end_station_name": leg["end_station"],
                 "leg_duration_hours": str(math.floor(leg_time / 3600)),
                 "leg_duration_minutes": str(math.floor((leg_time % 3600) / 60))
