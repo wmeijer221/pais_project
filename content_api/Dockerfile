@@ -1,6 +1,6 @@
 FROM python:3.11.1 as base
 
-WORKDIR /src
+WORKDIR /app
 RUN apt-get -y upgrade && \
     apt-get -y update && \
     apt-get install -y wkhtmltopdf
@@ -9,6 +9,6 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 COPY .. .
 
-ENV PYTHONPATH /src
+ENV PYTHONPATH /app
 
 CMD ["uvicorn", "content_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

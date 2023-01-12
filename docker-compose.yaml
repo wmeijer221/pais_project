@@ -153,11 +153,14 @@ services:
       - "8083:8000"
     networks:
       - camunda-platform
+    volumes:
+      - content_api:/app/data
 
 volumes:
   zeebe:
   elastic:
   kibana:
+  content_api:
 
 networks:
   camunda-platform:
