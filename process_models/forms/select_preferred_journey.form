@@ -28,7 +28,7 @@
       "id": "Field_1spydti",
       "key": "option_selected_id",
       "validate": {
-        "required": true
+        "required": false
       },
       "defaultValue": "<none>",
       "valuesKey": "route_selection_options"

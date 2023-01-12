@@ -31,14 +31,20 @@ async def find_route_options(journey_specification: Dict, order_id: str):
     Finds route options and sends it to the customer.
     """
 
-    if journey_specification['class'] == "first":
-        weight = 'price_eurocents_firstclass'
-    else:
-        weight = 'price_eurocents_economy'
-
-    options = rdb.find_route_options(journey_specification['start_station'],
+    firstclass_options = rdb.find_route_options(journey_specification['start_station'],
                                      journey_specification['end_station'],
-                                     weight)
+                                     'price_eurocents_firstclass')
+
+    econ_options = rdb.find_route_options(journey_specification['start_station'],
+                                     journey_specification['end_station'],
+                                     'price_eurocents_economy')
+
+    if journey_specification['class'] == "first":
+        options = firstclass_options
+        options.extend(econ_options)
+    else:
+        options = econ_options
+        options.extend(firstclass_options)
 
     options = {str(uuid4()): option for option in options}
     selection_options = list([{"label": f'Option {index + 1}', "value": id} for index, id in enumerate(options.keys())])
