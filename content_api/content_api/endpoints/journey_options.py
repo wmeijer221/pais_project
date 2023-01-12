@@ -48,9 +48,8 @@ async def get_latest_ticket():
         raise HTTPException(status_code=404, detail="Ticket not found.")
 
 
-@app.get("/get_ticket_options", response_class=FileResponse)
-async def get_ticket_options(message: dict):
-    order_id = message["order_id"]
+@app.get("/get_ticket_options/{order_id}", response_class=FileResponse)
+async def get_ticket_options(order_id: str):
     try:
         ticket_file = load_and_generate_options(order_id)
         return FileResponse(ticket_file)
@@ -66,6 +65,8 @@ def load_and_generate_options(order_id: str) -> str:
 
     logging.info(f'Getting options for: {order_id}')
     ticket_options = load_options(order_id)
+    if ticket_options is None:
+        raise Exception("Ticket doesn't exist.")
     ticket_file = generate_ticket(order_id, ticket_options)
     return ticket_file
 
