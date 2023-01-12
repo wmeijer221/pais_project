@@ -6,16 +6,6 @@
       "id": "Field_1lua2zc"
     },
     {
-      "values": [
-        {
-          "label": "Copenhagen",
-          "value": "kobenhavn"
-        },
-        {
-          "label": "Stockholm",
-          "value": "stockholm"
-        }
-      ],
       "label": "Starting Station",
       "type": "select",
       "id": "Field_1kbmkh7",
@@ -24,19 +14,10 @@
       "defaultValue": "kobenhavn",
       "validate": {
         "required": true
-      }
+      },
+      "valuesKey": "all_stations"
     },
     {
-      "values": [
-        {
-          "label": "Copenhagen",
-          "value": "kobenhavn"
-        },
-        {
-          "label": "Stockholm",
-          "value": "stockholm"
-        }
-      ],
       "label": "Destination",
       "type": "select",
       "id": "Field_1u6p2em",
@@ -45,7 +26,8 @@
       "defaultValue": "stockholm",
       "validate": {
         "required": true
-      }
+      },
+      "valuesKey": "all_stations"
     },
     {
       "values": [

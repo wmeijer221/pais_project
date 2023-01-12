@@ -24,9 +24,10 @@ class TicketProvider:
     Stub class for ticket provider adapters.
     """
 
-    def book_ticket(self, ticket_details: dict) -> dict:
+    def book_ticket(self, ticket_details: dict, traveler_information: dict) -> dict:
         trip_details = {
             "ticket": ticket_details,
+            "traveler_information": traveler_information,
             "billing": system_banking_details
         }
         return True, trip_details
@@ -78,7 +79,7 @@ class TicketProviderAdapter:
             return False, None
 
         # Books tickets.
-        success, ticket_details = self._book_all_tickets(leg_details)
+        success, ticket_details = self._book_all_tickets(leg_details, billing_information)
         if not success:
             return False, None
 
@@ -97,10 +98,10 @@ class TicketProviderAdapter:
         return [(leg, self._get_provider_from_key(leg["company"]))
                 for leg in trip]
 
-    def _book_all_tickets(self, leg_details: list[dict, TicketProvider]) -> tuple[bool, list[dict]]:
+    def _book_all_tickets(self, leg_details: list[dict, TicketProvider], billing_information: dict) -> tuple[bool, list[dict]]:
         tickets = []
         for leg, provider in leg_details:
-            success, details = provider.book_ticket(leg)
+            success, details = provider.book_ticket(leg, billing_information)
             if success:
                 tickets.append(details)
             else:

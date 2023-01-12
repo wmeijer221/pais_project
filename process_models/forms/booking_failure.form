@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "text": "# Oh no!\n\nSomething went wrong...",
+      "type": "text",
+      "id": "Field_0rhjem3"
+    },
+    {
+      "label": "Reason",
+      "type": "textfield",
+      "id": "Field_0lz5iys",
+      "key": "exception_reason",
+      "disabled": true
+    }
+  ],
+  "type": "default",
+  "id": "booking_failed",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}

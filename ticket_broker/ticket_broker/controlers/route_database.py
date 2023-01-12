@@ -2,10 +2,8 @@ import copy
 from typing import List, Dict
 from pathlib import Path
 
-import logging
 import networkx as nx
 import yaml
-
 
 class RouteDatabase:
     """
@@ -21,6 +19,11 @@ class RouteDatabase:
         self._stations = stations
         self.companies = companies
         self._init_network_graph()
+
+    def get_all_stations(self) -> list[tuple[str, str]]:
+        stations = self.graph.nodes(data=True)
+        data = [(key, station["pretty_name"]) for key, station in stations]
+        return list(data)
 
     def find_route_options(self, start_station, end_station, weight):
         """
@@ -65,8 +68,6 @@ class RouteDatabase:
         based on the weight condition. Will select the smallest weight.
         """
         edges = self.graph.get_edge_data(leg_start, leg_end)
-
-        logging.debug(f"LEG DATA FROM {leg_start} to {leg_end}:\n EDGES: {edges}")
 
         if len(edges) == 1:
             best_option = 0

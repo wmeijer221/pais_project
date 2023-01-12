@@ -1,0 +1,46 @@
+{
+  "components": [
+    {
+      "text": "# Select Preferred Journey\n\nSelect your preferred trip here.",
+      "type": "text",
+      "id": "Field_0g58c66"
+    },
+    {
+      "label": "Order ID",
+      "type": "textfield",
+      "id": "Field_0nib6e2",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "text": "### Options:",
+      "type": "text",
+      "id": "Field_1af2ut9"
+    },
+    {
+      "text": "<img src=\"http://127.0.0.1:8083/get_latest_ticket_options\">",
+      "type": "text",
+      "id": "Field_0e469ls"
+    },
+    {
+      "label": "Selection",
+      "type": "select",
+      "id": "Field_1spydti",
+      "key": "option_selected_id",
+      "validate": {
+        "required": false
+      },
+      "defaultValue": "<none>",
+      "valuesKey": "route_selection_options"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0qf33zj",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.5.1"
+  },
+  "schemaVersion": 5
+}
