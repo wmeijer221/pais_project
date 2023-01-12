@@ -3,11 +3,10 @@ from fastapi.responses import FileResponse
 import imgkit
 import json
 import logging
-import math
 from os import path, mkdir
 
 from content_api.main import load_template, app
-from content_api.util import sum_values_of_key
+from content_api.util import sum_values_of_key, seconds_to_hours, seconds_to_hourminutes
 
 LATEST_OPTION_PATH = "./data/option.dat"
 
@@ -132,8 +131,8 @@ def generate_journey_html(journey_id: int, journey_key: str, journey: dict) -> s
         "end_station": legs[-1]["end_station"],
         "transfer_count": str(len(legs) - 1),
         "total_price": f'{(total_price / 100):.2f}',
-        "total_hours": str(math.floor(total_time / 3600)),
-        "total_minutes": str(math.floor((total_time % 3600) / 60)),
+        "total_hours": str(seconds_to_hours(total_time)),
+        "total_minutes": str(seconds_to_hourminutes(total_time)),
         "leg_details": formatted_legs
     }
     formatted_journey = journey_template.format(**journey_data)
@@ -150,8 +149,8 @@ def generate_leg_html(leg_id: int, leg: dict) -> str:
         "leg_index": leg_id,
         "leg_start_station_name": leg["start_station"],
         "leg_end_station_name": leg["end_station"],
-        "leg_duration_hours": str(math.floor(leg_time / 3600)),
-        "leg_duration_minutes": str(math.floor((leg_time % 3600) / 60))
+        "leg_duration_hours": str(seconds_to_hours(leg_time)),
+        "leg_duration_minutes": str(seconds_to_hourminutes(leg_time))
     }
     formatted_leg = leg_template.format(**params)
     return formatted_leg
