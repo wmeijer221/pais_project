@@ -2,7 +2,7 @@ import logging
 from typing import Collection, Dict
 from pyzeebe import Job
 
-from ticket_broker.worker_instance import WorkerClientInstance
+from ticket_broker.worker import worker, client
 
 
 async def logging_task_decorator(job: Job) -> Job:
@@ -22,9 +22,6 @@ async def on_error(exception: Exception, job: Job):
     status = f"Failed to handle job {job}. Error: {str(exception)}"
     logging.warning(status)
     await job.set_error_status(status)
-
-
-worker, client = WorkerClientInstance.get()
 
 
 @worker.task(task_type="select_option_from_key",

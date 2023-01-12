@@ -1,6 +1,7 @@
 import logging
+import time
 
-from .worker import run_loop
+from .worker import create_client, run_loop
 from ._version import VERSION
 
 logging.basicConfig(level=logging.INFO)
@@ -16,4 +17,16 @@ title = f"""
 """
 logging.info(title)
 
-run_loop()
+failed = True
+time.sleep(10)
+while failed: 
+  try:
+    create_client()
+    from ticket_broker.use_cases import *
+    logging.info("I started!")
+    run_loop()
+    failed = False
+  except Exception as ex:
+    logging.critical("Failed to run loop; retrying in 5 seconds.")
+    logging.critical(ex)
+    time.sleep(5)

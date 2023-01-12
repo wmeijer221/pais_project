@@ -95,7 +95,7 @@ def generate_tickets(tickets: list[dict], order_id: str) -> str:
             "traveler_name": traveler["full_name"],
             "traveler_seat": _generate_seat(),
             "departure_time": f"{seconds_to_hours(start_time):02d}:{seconds_to_hourminutes(start_time):02d}",
-            "arrival_time": f"{seconds_to_hours(end_time):02d}:{seconds_to_hourminutes(end_time):02d}",
+            "arrival_time": f"{seconds_to_hours(end_time) % 24 :02d}:{seconds_to_hourminutes(end_time):02d}",
         }
         start_time = end_time
         formatted_ticket = final_ticket_template.format(**data)

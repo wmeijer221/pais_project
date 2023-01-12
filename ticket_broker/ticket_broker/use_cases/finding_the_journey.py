@@ -6,10 +6,7 @@ from uuid import uuid4
 
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
 from ticket_broker.controlers.route_database import RouteDatabase
-from ticket_broker.worker_instance import WorkerClientInstance
-
-
-worker, client = WorkerClientInstance.get()
+from ticket_broker.worker import worker, client
 
 rdb = RouteDatabase.from_file(Path("data/railways.yaml"))
 

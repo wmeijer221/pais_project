@@ -139,6 +139,7 @@ services:
       - zeebe
     depends_on:
       - zeebe
+      - rabbitmq
       - content_api
     environment:
       - "ENDPOINT_HOST=zeebe"

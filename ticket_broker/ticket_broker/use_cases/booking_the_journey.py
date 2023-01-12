@@ -6,10 +6,7 @@ from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decor
 from ticket_broker.controlers.bank_adapter import BankAdapter
 from ticket_broker.controlers.ticket_database import TicketDatabase
 from ticket_broker.controlers.ticket_provider_adapter import TicketProviderAdapter
-from ticket_broker.worker_instance import WorkerClientInstance
-
-
-worker, client = WorkerClientInstance.get()
+from ticket_broker.worker import worker, client
 
 bank_verifier = BankAdapter()
 journey_booker = TicketProviderAdapter()

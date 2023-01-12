@@ -3,9 +3,8 @@ from typing import Dict
 
 from ticket_broker.controlers.ticket_database import TicketDatabase
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
-from ticket_broker.worker_instance import WorkerClientInstance
+from ticket_broker.worker import worker, client
 
-worker, client = WorkerClientInstance.get()
 ticket_database = TicketDatabase()
 
 
