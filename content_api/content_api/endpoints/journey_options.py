@@ -38,7 +38,8 @@ async def get_latest_ticket():
     try:
         order_id = latest_order_id.get()
         ticket_file = load_and_generate_options(order_id)
-        return FileResponse(ticket_file)
+        headers = {'Cache-Control': 'no-cache'}
+        return FileResponse(ticket_file, headers=headers)
     except:
         raise HTTPException(status_code=404, detail="Ticket not found.")
 
@@ -47,7 +48,8 @@ async def get_latest_ticket():
 async def get_ticket_options(order_id: str):
     try:
         ticket_file = load_and_generate_options(order_id)
-        return FileResponse(ticket_file)
+        headers = {'Cache-Control': 'no-cache'}
+        return FileResponse(ticket_file, headers=headers)
     except:
         raise HTTPException(status_code=404, detail="Ticket not found.")
 

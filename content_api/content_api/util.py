@@ -48,7 +48,7 @@ class PersistentObject:
             with open(self._data_path, "r", encoding="utf-8") as data_file:
                 data = data_file.read()
             self._value = self._on_load(data)
-        except: 
+        except:
             self._value = None
 
 class PersistentDict(PersistentObject):
