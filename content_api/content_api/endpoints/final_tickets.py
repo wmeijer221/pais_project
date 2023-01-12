@@ -1,14 +1,16 @@
+import base64
 from fastapi import HTTPException
 from fastapi.responses import FileResponse
 import imgkit
 import logging
+import math
+import os
+from PIL import Image
 import random
-import base64
 
 from content_api.main import load_template, app
-from content_api.util import sum_values_of_key, seconds_to_hours, \
-                             seconds_to_hourminutes, PersistentObject,\
-                             PersistentDict
+from content_api.util import seconds_to_hours, seconds_to_hourminutes,\
+                             PersistentObject, PersistentDict
 
 ticket_template = load_template("ticket_template.html")
 final_ticket_template = load_template("final_ticket_template.html")
@@ -81,7 +83,7 @@ def load_ticket_details(ticket: PersistentDict) -> dict:
 def generate_tickets(tickets: list[dict], order_id: str) -> str:
     global image_background
     start_time = 32651
-    logging.info(tickets)
+    ticket_files = []
     for index, ticket in enumerate(tickets):
         ticket_info = ticket["ticket"]
         traveler = ticket["traveler_information"]
@@ -92,14 +94,12 @@ def generate_tickets(tickets: list[dict], order_id: str) -> str:
             "station_to": ticket_info["end_station"],
             "traveler_name": traveler["full_name"],
             "traveler_seat": _generate_seat(),
-            "departure_time": f"{seconds_to_hours(start_time)}:{seconds_to_hourminutes(start_time)}",
-            "arrival_time": f"{seconds_to_hours(end_time)}:{seconds_to_hourminutes(end_time)}",
+            "departure_time": f"{seconds_to_hours(start_time):02d}:{seconds_to_hourminutes(start_time):02d}",
+            "arrival_time": f"{seconds_to_hours(end_time):02d}:{seconds_to_hourminutes(end_time):02d}",
         }
         start_time = end_time
         formatted_ticket = final_ticket_template.format(**data)
         formatted_ticket = ticket_template.format(formatted_ticket, ft_styles)
-
-        logging.info("FINISHED  FORMATTING")
 
         # stores it.
         html_path = f'./data/ft_{order_id}_{index}.html'
@@ -108,8 +108,28 @@ def generate_tickets(tickets: list[dict], order_id: str) -> str:
         output_file.close()
         img_path = f'./data/ft_{order_id}_{index}.png'
         imgkit.from_file(html_path, img_path)
+        ticket_files.append(img_path)
 
-        logging.info("FINISHED STORING")
+    output_path = f'./data/ft_{order_id}.png'
+    merge_as_grid(2, ticket_files, output_path)
+    return output_path
+
+def merge_as_grid(col_count: int, files: list[str], out_path: str):
+    images = [Image.open(x) for x in files]
+    width, height = 385, 285
+    total_width = col_count * width
+    total_height = math.ceil(len(files) / col_count) * height
+
+    new_img = Image.new("RGB", (total_width, total_height))
+
+    for index, img in enumerate(images):
+        y_offset = math.floor(index / col_count) * height
+        x_offset = (index % col_count) * width
+        new_img.paste(img, (x_offset, y_offset))
+
+    my_path = os.path.dirname(__file__)
+    new_img.save(f'{my_path}/../../{out_path}')
+
 
 
 def _generate_seat() -> str:

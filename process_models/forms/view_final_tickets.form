@@ -1,9 +1,21 @@
 {
   "components": [
     {
-      "text": "# Success!\nYou completed your order!\n\nThank you for travelling with Ticket to Europe!\n\nHere are your tickets:\n<br>\n<img src=\"http://127.0.0.1:8083/get_latest_ticket\">",
+      "text": "# Success!\nYou completed your order!\n\nThank you for travelling with Ticket to Europe!\n",
       "type": "text",
       "id": "Field_1ue850o"
+    },
+    {
+      "label": "Order ID",
+      "type": "textfield",
+      "id": "Field_1kxj7ir",
+      "key": "order_id",
+      "disabled": true
+    },
+    {
+      "text": "Here are your tickets:\n<br>\n<img src=\"http://127.0.0.1:8083/get_latest_ticket\">",
+      "type": "text",
+      "id": "Field_08tcugt"
     }
   ],
   "type": "default",
