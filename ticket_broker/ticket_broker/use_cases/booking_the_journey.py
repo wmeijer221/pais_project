@@ -1,6 +1,6 @@
-from typing import Dict
-
 from pyzeebe import Job
+import requests
+from typing import Dict
 
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
 from ticket_broker.controlers.bank_adapter import BankAdapter
@@ -47,9 +47,19 @@ async def book_tickets(job: Job, billing_information: Dict,
         selected_option, billing_information)
     if success:
         ticket_database.store_new_journey(str(order_id), tickets_details)
+        send_tickets_to_content_server(tickets_details, order_id)
         await client.publish_message("confirm_order", str(order_id))
         return {"tickets_details": tickets_details}
     else:
         message = "Failed to book tickets"
         error_code = "booking_failed"
         await job.set_error_status(message, error_code)
+
+
+def send_tickets_to_content_server(tickets: list[dict], order_id: str):
+    json_message = {
+        "order_id": order_id,
+        "tickets": tickets,
+    }
+    url = "http://content_api:8000/set_latest_ticket"
+    requests.post(url, json=json_message, verify=False)

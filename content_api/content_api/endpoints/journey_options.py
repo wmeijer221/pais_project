@@ -3,10 +3,11 @@ from fastapi.responses import FileResponse
 import imgkit
 import json
 import logging
-from os import path, mkdir
+from os import path
 
 from content_api.main import load_template, app
-from content_api.util import sum_values_of_key, seconds_to_hours, seconds_to_hourminutes
+from content_api.util import sum_values_of_key, seconds_to_hours, \
+                             seconds_to_hourminutes, PersistentObject
 
 LATEST_OPTION_PATH = "./data/option.dat"
 
@@ -16,24 +17,17 @@ journey_template = load_template("journey_template.html")
 leg_template = load_template("leg_template.html")
 styles = load_template("styles.css")
 
-if not path.exists("./data"):
-    mkdir("./data")
+latest_order_id = PersistentObject(LATEST_OPTION_PATH)
+logging.info(f'Starting with {latest_order_id.get()=}.')
 
-try:
-    with open(LATEST_OPTION_PATH, "r", encoding="utf-8") as option_file:
-        latest_order_id = option_file.read().strip()
-except:
-    latest_order_id = "-1"
-
-logging.info(f'Starting with {latest_order_id=}.')
 
 @app.post("/set_latest_ticket_options")
 async def set_latest_ticket(message: dict):
     global latest_order_id
-    latest_order_id = message["order_id"]
-    with open(LATEST_OPTION_PATH, "w+", encoding="utf-8") as option_file:
-        option_file.write(str(latest_order_id))
-    with open(f"./data/{latest_order_id}.json", "w+", encoding="utf-8") as data_file:
+    order_id = str(message["order_id"])
+    latest_order_id.set(order_id)
+    with open(f"./data/{order_id}.json", "w+", encoding="utf-8") \
+         as data_file:
         options = message["route_options"]
         data_file.write(json.dumps(options, indent=4))
 
@@ -42,7 +36,8 @@ async def set_latest_ticket(message: dict):
 async def get_latest_ticket():
     global latest_order_id
     try:
-        ticket_file = load_and_generate_options(latest_order_id)
+        order_id = latest_order_id.get()
+        ticket_file = load_and_generate_options(order_id)
         return FileResponse(ticket_file)
     except:
         raise HTTPException(status_code=404, detail="Ticket not found.")

@@ -259,22 +259,13 @@
       <zeebe:userTaskForm id="userTaskForm_3r165au">{
   "components": [
     {
-      "label": "Order ID",
-      "type": "textfield",
-      "id": "Field_18r4xxg",
-      "key": "order_id",
-      "disabled": true
-    },
-    {
-      "label": "Ticket Details",
-      "type": "textfield",
-      "id": "Field_0r3gegh",
-      "key": "ticket_details",
-      "disabled": true
+      "text": "# Success!\nYou completed your order!\n\nThank you for travelling with Ticket to Europe!\n\nHere are your tickets:\n&lt;br&gt;\n&lt;img src=\"http://127.0.0.1:8083/get_latest_ticket\"&gt;",
+      "type": "text",
+      "id": "Field_1ue850o"
     }
   ],
   "type": "default",
-  "id": "Form_1s9zwik",
+  "id": "Form_0skt1lb",
   "executionPlatform": "Camunda Cloud",
   "executionPlatformVersion": "8.1.0",
   "exporter": {
