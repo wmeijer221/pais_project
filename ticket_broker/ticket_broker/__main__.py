@@ -2,9 +2,11 @@ import logging
 import time
 
 from .worker import create_client, run_loop
-from ._version import VERSION
+from ._version import NAME, VERSION
 
 logging.basicConfig(level=logging.INFO)
+# Essentially disables Pyzeebe logs.
+logging.getLogger("pyzeebe.worker.job_poller").setLevel(logging.CRITICAL)
 
 title = f"""
  _____ _     _       _      _          _____                     
@@ -13,7 +15,7 @@ title = f"""
   |_| |_|___|_,_|___|_|    |_| |___|  |_____|___|_| |___|  _|___|
                                                         |_|      
                                                         
-                                       Ticket Broker (v{VERSION})
+                                       {NAME} (v{VERSION})
 """
 logging.info(title)
 

@@ -2,15 +2,15 @@ from fastapi import HTTPException
 from fastapi.responses import FileResponse
 import imgkit
 import json
-import logging
 from os import path
+from PIL import Image
 
-from content_api.main import load_template, app
+from content_api.main import load_template, app, logger
 from content_api.util import sum_values_of_key, seconds_to_hours, \
                              seconds_to_hourminutes, PersistentObject
 
-LATEST_OPTION_PATH = "./data/option.dat"
-
+LATEST_OPTION_PATH = "./data/jo_latest.txt"
+OPTION_PATH = "./data/jo_{order_id}.{ext}"
 
 ticket_template= load_template("ticket_template.html")
 journey_template = load_template("journey_template.html")
@@ -18,15 +18,14 @@ leg_template = load_template("leg_template.html")
 styles = load_template("styles.css")
 
 latest_order_id = PersistentObject(LATEST_OPTION_PATH)
-logging.info(f'Starting with {latest_order_id.get()=}.')
-
 
 @app.post("/set_latest_ticket_options")
 async def set_latest_ticket(message: dict):
     global latest_order_id
     order_id = str(message["order_id"])
     latest_order_id.set(order_id)
-    with open(f"./data/{order_id}.json", "w+", encoding="utf-8") \
+    data_path = OPTION_PATH.format(order_id=order_id, ext="json")
+    with open(data_path, "w+", encoding="utf-8") \
          as data_file:
         options = message["route_options"]
         data_file.write(json.dumps(options, indent=4))
@@ -60,7 +59,7 @@ def load_and_generate_options(order_id: str) -> str:
     image of all its journey options.
     """
 
-    logging.info(f'Getting options for: {order_id}')
+    logger.info(f'Getting options for: {order_id}')
     ticket_options = load_options(order_id)
     if ticket_options is None:
         raise Exception("Ticket doesn't exist.")
@@ -73,7 +72,7 @@ def load_options(order_id: str) -> dict:
     Loads the ticket options for an order.
     """
 
-    data_path = f"./data/{order_id}.json"
+    data_path = OPTION_PATH.format(order_id=order_id, ext="json")
     if not path.exists(data_path):
         return None
     with open(data_path, "r", encoding="utf-8") as data_file:
@@ -87,11 +86,18 @@ def generate_ticket(order_id: str, ticket_options: dict) -> str:
     """
 
     html = generate_options_html(ticket_options)
-    html_path = f'./data/{order_id}.html'
+    html_path = OPTION_PATH.format(order_id=order_id, ext="html")
     with open(html_path, "w+", encoding="utf-8") as output_file:
         output_file.write(html)
-    img_path = f'./data/{order_id}.png'
-    imgkit.from_file(html_path, img_path)
+    img_path = OPTION_PATH.format(order_id=order_id, ext="png")
+    imgkit.from_file(html_path, img_path, options={'quiet': ''})
+
+    # Crops image as imgkit outputs wide images.
+    img_path = path.abspath(img_path)
+    original_img = Image.open(img_path)
+    cropped_img = original_img.crop((0, 0, 615, original_img.height))
+    cropped_img.save(img_path)
+
     return img_path
 
 def generate_options_html(options: dict) -> str:

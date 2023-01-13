@@ -11,7 +11,9 @@ from os import mkdir, path
 from content_api._version import VERSION
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.CRITICAL)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 title = f"""
  _____ _     _       _      _          _____                     
@@ -22,7 +24,7 @@ title = f"""
                                                         
                                        Content API (v{VERSION})
 """
-logging.info(title)
+logger.info(title)
 
 app = FastAPI()
 

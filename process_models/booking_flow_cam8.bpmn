@@ -521,7 +521,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0khrnne" sourceRef="Activity_0koua8h" targetRef="satisfied_with_option" />
     <bpmn:sequenceFlow id="Flow_no_wanted_options" name="No wanted options" sourceRef="satisfied_with_option" targetRef="send_retry_message">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=option_selected_id = null</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=option_selected_id = "&lt;none&gt;"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_satisfied" sourceRef="satisfied_with_option" targetRef="place_order" />
     <bpmn:sequenceFlow id="Flow_0i3qulw" sourceRef="send_specifications_to_ticket_broker" targetRef="receive_journey_options" />
@@ -1135,17 +1135,17 @@
           <dc:Bounds x="2359" y="727" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_148rnkd_di" bpmnElement="Event_1dkitk2">
-        <dc:Bounds x="1472" y="522" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_17j74fl_di" bpmnElement="Event_0w4fixi">
-        <dc:Bounds x="1472" y="652" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0o52i6a_di" bpmnElement="ticket_unavailable_error">
         <dc:Bounds x="1912" y="592" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1936" y="635" width="88" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_17j74fl_di" bpmnElement="Event_0w4fixi">
+        <dc:Bounds x="1472" y="652" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_148rnkd_di" bpmnElement="Event_1dkitk2">
+        <dc:Bounds x="1472" y="522" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_18x503c_di" bpmnElement="Flow_18x503c">
         <di:waypoint x="718" y="570" />
