@@ -25,19 +25,19 @@ Deploy all of these and start an instance of ``task_creation_flow.bpmn``, using 
 You should be able to walk through the different processes now at ``localhost:8082``.
 
 Note that, because the default Camunda forms have limited features, we implemented a workaround to show tickets.
-A consequence of this is that, when in the ``View Tickets`` form, an outdated ticket is shown due to it being stored in browser cache.
+A consequence of this is that, when in the _View Tickets_ form, an outdated ticket is shown due to it being stored in browser cache.
 If this happens, simply reload the page using ``Ctrl + f5``.
 
 ## Project Structure
 
-This project implements three things: the the ``Ticket Broker``, the``Process Models``, and the ``Content API``, each having their own folder.
+This project implements three things: the the _Ticket Broker_, the _Process Models_, and the _Content API_, each having their own folder.
 
-The ``Ticket Broker`` implements a [Zeebe](https://camunda.com/platform/zeebe/) client to communicate with the Camunda engine.
+The _Ticket Broker_ implements a [Zeebe](https://camunda.com/platform/zeebe/) client to communicate with the Camunda engine.
 It implements all of the automated process model tasks, and interacts with mock-ups of e.g. ticket providers, giving an idea of realistic business logic.
 
-The ``Process Models`` contain all of the process models used within the information system, defining various user and automated tasks.
+The _Process Models_ contain all of the process models used within the information system, defining various user and automated tasks.
 Additionally, it contains various forms to allow easier data input within the Camunda Tasklist GUI.
 
-Finally, the ``Content API`` implements a simple API using [FastAPI](https://fastapi.tiangolo.com/).
+Finally, the _Content API_ implements a simple API using [FastAPI](https://fastapi.tiangolo.com/).
 This service is not a fundamental component of this project, however, has been implemented to circumvent the limitations of forms in Camunda 8.1.
 Camunda forms use this endpoint to load images of e.g. tickets.
