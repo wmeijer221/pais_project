@@ -11,16 +11,31 @@ class TicketDatabase:
     Database class for ticket management.
     """
 
-    journeys: Dict = {}
-    tickets: Dict = {}
+    journeys: Dict[str, list[Dict]] = {}
 
-    def store_new_journey(self, order_id: str, ticket_details: Dict):
+    def store_new_journey(self, order_id: str, ticket_details: list[Dict]) -> list[Dict]:
         """
         Stores a new journey in the database.
         """
 
-        self.journeys[order_id] = ticket_details
+        if order_id in self.journeys:
+            new_journey = self.journeys[order_id]
+            new_journey.extend(ticket_details)
+            self.journeys[order_id] = new_journey
+        else:
+            self.journeys[order_id] = ticket_details
+        return self.journeys[order_id]
         
+    def remove_journey_legs(self, order_id: str, legs: list[str]):
+        """
+        Removes legs from a journey.
+        """
+
+        journey = self.journeys[order_id]
+        new_journey = [leg for index, leg in enumerate(journey) 
+                   if not index in legs]
+        self.journeys[order_id] = new_journey
+
 
     def get_journey_details(self, order_id) -> Dict:
         """

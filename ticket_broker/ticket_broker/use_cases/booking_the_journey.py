@@ -43,8 +43,8 @@ async def book_tickets(job: Job, billing_information: Dict,
     success, tickets_details = journey_booker.book_journey(
         selected_option, billing_information)
     if success:
-        ticket_database.store_new_journey(str(order_id), tickets_details)
-        send_tickets_to_content_server(tickets_details, order_id)
+        full_journey = ticket_database.store_new_journey(str(order_id), tickets_details)
+        send_tickets_to_content_server(full_journey, order_id)
         await client.publish_message("confirm_order", str(order_id))
         return {"tickets_details": tickets_details}
     else:

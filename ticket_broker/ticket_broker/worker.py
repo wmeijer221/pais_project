@@ -4,12 +4,14 @@ Module for handling CAMUNDA tasks.
 import asyncio
 import logging
 import os
-
 from pyzeebe import ZeebeWorker, ZeebeClient, create_insecure_channel
+
+from ticket_broker._version import NAME
 
 ENDPOINT_HOST_KEY = "ENDPOINT_HOST"
 ENDPOINT_PORT_KEY = "ENDPOINT_PORT"
 
+logger = logging.getLogger(__name__)
 
 worker: ZeebeWorker = None
 client: ZeebeClient = None

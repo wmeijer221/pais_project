@@ -1,6 +1,6 @@
 from ticket_broker.controlers.ticket_database import TicketDatabase
 from ticket_broker.use_cases.basic_use_cases import on_error, logging_task_decorator
-from ticket_broker.worker import worker, client
+from ticket_broker.worker import worker
 
 ticket_database = TicketDatabase()
 
@@ -34,6 +34,7 @@ async def verify_tickets(tickets_to_cancel: list, order_id: str):
              exception_handler=on_error,
              before=[logging_task_decorator])
 async def cancel_tickets(tickets_to_cancel: list, order_id: str):
+    ticket_database.remove_journey_legs(order_id, tickets_to_cancel)
     return {
         "successfully_canceled_tickets": tickets_to_cancel,
         "unsuccessfully_canceled_tickets": [],

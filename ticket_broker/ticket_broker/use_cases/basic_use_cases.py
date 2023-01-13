@@ -2,7 +2,8 @@ import logging
 from typing import Collection, Dict
 from pyzeebe import Job
 
-from ticket_broker.worker import worker, client
+from ticket_broker.worker import worker, client, logger
+from ticket_broker._version import NAME
 
 
 async def logging_task_decorator(job: Job) -> Job:
@@ -10,7 +11,7 @@ async def logging_task_decorator(job: Job) -> Job:
     Logs the incoming job.
     """
 
-    logging.info(f'Received job {job.type} ({job.key})')
+    logger.info(f'Received job {job.type} ({job.key})')
     return job
 
 
@@ -20,7 +21,7 @@ async def on_error(exception: Exception, job: Job):
     """
 
     status = f"Failed to handle job {job}. Error: {str(exception)}"
-    logging.warning(status)
+    logger.warning(status)
     await job.set_error_status(status)
 
 
